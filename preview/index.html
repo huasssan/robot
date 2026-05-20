@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FMG Embodied Intelligence Platform</title>
+<style>
+  :root {
+    --bg: oklch(98.3% 0.003 286.4);
+    --surface: oklch(100.0% 0.000 89.9);
+    --fg: oklch(28.1% 0.002 286.3);
+    --muted: oklch(47.6% 0.001 17.2);
+    --border: oklch(92.6% 0.005 286.3);
+    --accent: oklch(69.1% 0.177 134.2);
+    --success-soft: oklch(96.4% 0.015 145.5);
+    --danger: oklch(55.8% 0.193 25.6);
+    --danger-soft: oklch(95.3% 0.013 17.4);
+    --warning: oklch(80.3% 0.110 58.2);
+    --warning-soft: oklch(97% 0.026 58.2);
+    --info: oklch(51.3% 0.185 259.0);
+    --info-soft: oklch(95.8% 0.018 259.0);
+    --map-line: oklch(79.3% 0.017 259.4);
+    --rail: oklch(99% 0.002 286.4);
+    --shadow: oklch(28.1% 0.002 286.3 / 0.065);
+    --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", system-ui, sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 12px; line-height: 1.35; -webkit-font-smoothing: antialiased; }
+  body { overflow: auto; }
+  button { font: inherit; }
+  .num { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+  .icon { width: 18px; height: 18px; display: inline-block; flex: 0 0 auto; stroke-width: 1.9; }
+  .icon.sm { width: 14px; height: 14px; }
+  .icon.lg { width: 22px; height: 22px; }
+  .shell { min-height: 100vh; display: grid; grid-template-columns: 82px minmax(0, 1fr); background: var(--bg); }
+  .rail { position: sticky; top: 0; height: 100vh; background: var(--rail); border-right: 1px solid var(--border); display: grid; grid-template-rows: 64px 1fr 108px; justify-items: center; z-index: 2; }
+  .brand { width: 56px; height: 24px; margin-top: 21px; display: grid; place-items: center; }
+  .brand img { width: 56px; height: 23px; object-fit: contain; }
+  .nav { display: flex; flex-direction: column; align-items: center; gap: 18px; padding-top: 16px; width: 100%; }
+  .nav-item { width: 50px; height: 50px; display: grid; place-items: center; border-radius: 8px; color: color-mix(in oklch, var(--fg) 70%, var(--muted)); }
+  .nav-item.active { color: var(--accent); background: color-mix(in oklch, var(--accent) 11%, var(--surface)); }
+  .rail-bottom { display: grid; justify-items: center; gap: 14px; align-self: end; padding-bottom: 20px; }
+  .collapse { width: 38px; height: 34px; border: 1px solid var(--border); border-radius: 12px; display: grid; place-items: center; background: var(--surface); color: var(--muted); }
+  .avatar { width: 39px; height: 39px; border-radius: 50%; display: grid; place-items: center; background: color-mix(in oklch, var(--fg) 7%, var(--surface)); font-weight: 650; letter-spacing: 0.02em; color: var(--fg); }
+
+  .workspace { min-width: 0; display: grid; grid-template-rows: 64px 1fr; }
+  .topbar { height: 64px; background: var(--surface); border-bottom: 1px solid var(--border); display: grid; grid-template-columns: minmax(430px, 1fr) auto auto; align-items: center; gap: 22px; padding: 0 18px 0 30px; position: sticky; top: 0; z-index: 1; }
+  h1 { margin: 0; font-family: var(--font-display); font-size: 20px; line-height: 1; font-weight: 650; letter-spacing: -0.01em; white-space: nowrap; }
+  h1 span { color: var(--accent); font-weight: 500; }
+  .filters { display: flex; align-items: center; gap: 12px; }
+  .select { height: 42px; min-width: 124px; padding: 6px 12px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface); display: grid; grid-template-columns: 1fr 16px; align-items: center; box-shadow: 0 8px 22px var(--shadow); }
+  .select.wide { min-width: 220px; }
+  .select .label { color: var(--muted); font-size: 9px; line-height: 1; margin-bottom: 4px; }
+  .select .value { color: var(--fg); font-size: 11px; line-height: 1.1; font-weight: 520; }
+  .caret { width: 7px; height: 7px; border-right: 1.4px solid currentColor; border-bottom: 1.4px solid currentColor; transform: rotate(45deg); justify-self: end; margin-top: -4px; }
+  .shift { display: flex; align-items: center; gap: 8px; }
+  .shift .icon { color: var(--warning); }
+  .user-tools { display: flex; align-items: center; gap: 16px; color: var(--muted); }
+  .mock { display: inline-flex; align-items: center; gap: 8px; padding-right: 12px; border-right: 1px solid var(--border); font-size: 11px; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+  .bell { position: relative; display: grid; place-items: center; }
+  .badge { position: absolute; right: -8px; top: -9px; min-width: 18px; height: 18px; border-radius: 999px; background: var(--accent); color: var(--surface); display: grid; place-items: center; font-size: 10px; font-weight: 700; }
+  .profile { display: grid; grid-template-columns: auto 16px; gap: 8px; align-items: center; color: var(--fg); min-width: 132px; }
+  .profile strong { display: block; font-size: 11px; line-height: 1.15; }
+  .profile span { display: block; margin-top: 2px; color: var(--muted); font-size: 9px; }
+
+  .content { padding: 14px 20px 28px; display: grid; gap: 12px; }
+  .kpis { display: grid; grid-template-columns: repeat(7, minmax(148px, 1fr)); gap: 9px; }
+  .kpi { min-height: 79px; background: var(--surface); border: 1px solid var(--border); border-radius: 11px; box-shadow: 0 10px 28px var(--shadow); display: grid; grid-template-columns: 48px 1fr; align-items: center; padding: 13px 14px; gap: 12px; overflow: hidden; }
+  .kpi-icon { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--success-soft); color: var(--accent); }
+  .kpi.risk .kpi-icon, .kpi.impact .kpi-icon { background: var(--danger-soft); color: var(--danger); }
+  .kpi.warn .kpi-icon { background: var(--warning-soft); color: var(--warning); }
+  .kpi-title { color: var(--muted); font-size: 10px; margin-bottom: 2px; white-space: nowrap; }
+  .kpi-value { font-size: 18px; font-weight: 680; letter-spacing: -0.02em; line-height: 1.1; }
+  .kpi-value.ok { color: var(--accent); }
+  .kpi-value.bad { color: var(--danger); }
+  .kpi-value.warn { color: var(--warning); }
+  .kpi-sub { color: var(--accent); font-size: 10px; margin-top: 4px; }
+  .kpi-sub.bad { color: var(--danger); }
+  .kpi-sub.warn { color: var(--warning); }
+
+  .main-grid { display: grid; grid-template-columns: minmax(790px, 1fr) 326px; gap: 16px; align-items: stretch; }
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 10px 28px var(--shadow); overflow: hidden; }
+  .map-panel { min-height: 448px; position: relative; }
+  .map-surface { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; background:
+      radial-gradient(ellipse at 18% 75%, color-mix(in oklch, var(--fg) 10%, transparent), transparent 32%),
+      radial-gradient(ellipse at 74% 39%, color-mix(in oklch, var(--map-line) 36%, transparent), transparent 31%),
+      repeating-linear-gradient(165deg, color-mix(in oklch, var(--map-line) 24%, transparent) 0 1px, transparent 1px 12px),
+      linear-gradient(180deg, color-mix(in oklch, var(--surface) 82%, var(--bg)), var(--bg)); }
+  .map-surface::before { content: ""; position: absolute; inset: 0; opacity: .42; background-image:
+      repeating-radial-gradient(ellipse at 28% 72%, transparent 0 11px, var(--border) 12px 13px, transparent 14px 24px),
+      repeating-radial-gradient(ellipse at 77% 31%, transparent 0 13px, var(--border) 14px 15px, transparent 16px 28px); }
+  .map-surface::after { content: "Processing Plant"; position: absolute; right: 144px; top: 238px; width: 196px; height: 92px; border-radius: 6px; color: var(--muted); display: grid; place-items: end center; font-size: 12px; background:
+      linear-gradient(90deg, transparent 0 31%, color-mix(in oklch, var(--fg) 14%, transparent) 31% 34%, transparent 34% 100%),
+      linear-gradient(0deg, transparent 0 40%, color-mix(in oklch, var(--fg) 10%, transparent) 40% 45%, transparent 45% 100%),
+      color-mix(in oklch, var(--map-line) 28%, transparent); border: 1px solid color-mix(in oklch, var(--map-line) 45%, transparent); }
+  .overview-card { position: absolute; left: 16px; top: 18px; width: 200px; padding: 20px 16px 14px; background: color-mix(in oklch, var(--surface) 94%, transparent); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 18px 36px var(--shadow); }
+  .overview-title { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 640; margin-bottom: 18px; }
+  .overview-title .live { color: var(--accent); font-size: 10px; font-weight: 500; }
+  .kv { display: grid; grid-template-columns: 1fr auto; gap: 9px; color: var(--muted); font-size: 10px; margin: 8px 0; }
+  .kv strong { color: var(--fg); font-size: 10px; font-weight: 560; }
+  .kv .good { color: var(--accent); }
+  .zone { position: absolute; left: 650px; top: 0; right: 0; height: 88px; border-radius: 0 12px 0 64px; background: repeating-linear-gradient(135deg, color-mix(in oklch, var(--danger) 23%, transparent) 0 1px, transparent 1px 7px), color-mix(in oklch, var(--danger-soft) 52%, transparent); border-bottom: 1px solid color-mix(in oklch, var(--danger) 25%, var(--border)); display: grid; place-items: center; color: var(--danger); font-weight: 650; font-size: 12px; }
+  .map-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .route-green, .route-blue { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 3; stroke-dasharray: 8 8; }
+  .route-green { stroke: var(--accent); }
+  .route-blue { stroke: var(--info); }
+  .rail-loop { fill: none; stroke: color-mix(in oklch, var(--fg) 28%, transparent); stroke-width: 3; stroke-dasharray: 7 5; opacity: .45; }
+  .marker { position: absolute; display: grid; grid-template-columns: 38px auto; align-items: center; gap: 8px; }
+  .marker .pin { width: 38px; height: 38px; border-radius: 50%; background: var(--surface); border: 2px solid currentColor; display: grid; place-items: center; box-shadow: 0 8px 24px var(--shadow); }
+  .marker .label { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; box-shadow: 0 12px 28px var(--shadow); min-width: 132px; }
+  .label b { display: block; color: var(--fg); font-size: 11px; margin-bottom: 4px; }
+  .label span { color: var(--muted); font-size: 9px; }
+  .label .state { color: var(--accent); font-weight: 650; }
+  .label .risk-text { color: var(--danger); font-weight: 650; }
+  .m-truck { color: var(--accent); left: 154px; top: 275px; }
+  .m-robot { color: var(--accent); left: 548px; top: 306px; }
+  .m-drone { color: var(--info); left: 792px; top: 306px; }
+  .m-risk { color: var(--danger); left: 644px; top: 112px; grid-template-columns: auto; justify-items: center; }
+  .m-risk .pin { width: 44px; height: 44px; background: var(--danger); color: var(--surface); border: 6px solid color-mix(in oklch, var(--danger) 30%, var(--surface)); }
+  .m-risk .label { margin-bottom: 6px; }
+  .m-edge { color: var(--accent); right: 132px; top: 199px; }
+  .legend { position: absolute; left: 18px; bottom: 18px; display: flex; gap: 18px; align-items: center; background: color-mix(in oklch, var(--surface) 93%, transparent); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 9px; color: var(--muted); box-shadow: 0 12px 24px var(--shadow); }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+  .sw { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+  .sw.line { width: 14px; height: 0; border-top: 2px dashed var(--accent); border-radius: 0; background: none; }
+  .sw.blue { background: var(--info); }
+  .sw.grey { background: var(--muted); }
+  .sw.red { background: var(--danger); }
+  .sw.restrict { background: none; border-radius: 4px; width: 12px; height: 12px; border: 1px solid color-mix(in oklch, var(--danger) 45%, var(--border)); background-image: repeating-linear-gradient(135deg, color-mix(in oklch, var(--danger) 34%, transparent) 0 1px, transparent 1px 4px); }
+  .zoom { position: absolute; right: 22px; bottom: 30px; width: 42px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--surface); box-shadow: 0 12px 28px var(--shadow); }
+  .zoom button { width: 42px; height: 40px; border: 0; border-bottom: 1px solid var(--border); background: var(--surface); color: var(--fg); font-size: 20px; }
+  .zoom button:last-child { border-bottom: 0; font-size: 14px; }
+
+  .queue { padding: 16px; display: flex; flex-direction: column; gap: 10px; height: 100%; }
+  .panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
+  .panel-title { font-family: var(--font-display); font-size: 12px; font-weight: 680; letter-spacing: -0.01em; }
+  .panel-action { color: var(--muted); font-size: 10px; display: inline-flex; align-items: center; gap: 4px; }
+  .count { margin-left: 6px; background: var(--danger); color: var(--surface); border-radius: 5px; padding: 2px 6px; font-size: 10px; }
+  .alert { display: grid; grid-template-columns: 22px 1fr auto; gap: 10px; min-height: 88px; border: 1px solid var(--border); border-radius: 8px; padding: 11px 10px; background: var(--surface); }
+  .alert.high { border-color: color-mix(in oklch, var(--danger) 28%, var(--border)); background: color-mix(in oklch, var(--danger-soft) 55%, var(--surface)); }
+  .alert.med { border-color: color-mix(in oklch, var(--warning) 32%, var(--border)); background: color-mix(in oklch, var(--warning-soft) 58%, var(--surface)); }
+  .alert.low { border-color: color-mix(in oklch, var(--accent) 22%, var(--border)); background: color-mix(in oklch, var(--success-soft) 70%, var(--surface)); }
+  .alert .ai { color: var(--danger); }
+  .alert.med .ai { color: var(--warning); }
+  .alert.low .ai { color: var(--accent); }
+  .alert h3 { margin: 0 0 5px; font-family: var(--font-display); font-size: 11px; line-height: 1.2; font-weight: 670; color: var(--danger); }
+  .alert.med h3 { color: var(--warning); }
+  .alert p { margin: 0 0 6px; color: var(--muted); font-size: 9px; }
+  .alert-meta { color: var(--muted); font-size: 9px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .priority { align-self: start; border-radius: 999px; padding: 3px 7px; font-size: 9px; font-weight: 650; background: var(--danger-soft); color: var(--danger); }
+  .priority.med { background: var(--warning-soft); color: var(--warning); }
+  .priority.low { background: var(--success-soft); color: var(--accent); }
+  .next { align-self: end; color: var(--muted); }
+  .action { color: var(--danger); font-weight: 650; }
+  .alert.med .action { color: var(--warning); }
+  .alert.low .action { color: var(--info); }
+
+  .bottom-grid { display: grid; grid-template-columns: 390px 270px minmax(420px, 1fr) 345px; gap: 12px; align-items: stretch; }
+  .card { padding: 14px; }
+  .mini-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 11px 0 8px; }
+  .mini { border: 1px solid var(--border); border-radius: 6px; padding: 9px 10px; min-height: 46px; }
+  .mini span { color: var(--muted); display: block; font-size: 9px; margin-bottom: 4px; }
+  .mini b { font-size: 14px; font-weight: 660; }
+  .mini em { font-style: normal; color: var(--accent); font-size: 10px; margin-left: 8px; }
+  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  th, td { padding: 7px 5px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; font-size: 10px; }
+  th { color: var(--muted); font-weight: 550; letter-spacing: 0.01em; }
+  td { color: var(--fg); }
+  tr:last-child td { border-bottom: 0; }
+  .asset-cell { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .asset-cell svg { color: var(--fg); }
+  .chip { display: inline-flex; align-items: center; justify-content: center; min-width: 36px; height: 20px; padding: 0 8px; border-radius: 5px; background: var(--success-soft); color: var(--accent); font-size: 9px; font-weight: 650; }
+  .chip.warn { background: var(--warning-soft); color: var(--warning); }
+  .bar { height: 4px; border-radius: 999px; background: color-mix(in oklch, var(--border) 78%, var(--surface)); overflow: hidden; }
+  .bar i { display: block; height: 100%; border-radius: inherit; background: var(--accent); }
+  .risk-body { display: grid; grid-template-columns: 132px 1fr; gap: 13px; margin-top: 11px; }
+  .heat { height: 169px; border-radius: 8px; border: 1px solid var(--border); background:
+      radial-gradient(circle at 28% 28%, color-mix(in oklch, var(--danger) 38%, transparent), transparent 35%),
+      radial-gradient(circle at 68% 70%, color-mix(in oklch, var(--accent) 40%, transparent), transparent 39%),
+      repeating-linear-gradient(160deg, color-mix(in oklch, var(--map-line) 45%, transparent) 0 1px, transparent 1px 8px),
+      var(--bg); }
+  .risk-list { display: grid; align-content: start; gap: 12px; }
+  .risk-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; color: var(--muted); font-size: 10px; }
+  .risk-row b { color: var(--fg); font-weight: 650; }
+  .risk-row .good { color: var(--accent); }
+  .risk-btn { margin-top: 13px; height: 34px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); width: 100%; font-size: 11px; color: var(--fg); display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .evidence-grid { display: grid; grid-template-columns: repeat(4, minmax(96px, 1fr)); gap: 10px; margin-top: 10px; }
+  .ev { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--surface); min-width: 0; }
+  .thumb { height: 107px; position: relative; overflow: hidden; background: var(--bg); }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.92) contrast(.95); }
+  .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 28px; height: 28px; border-radius: 50%; background: oklch(100% 0 0 / .76); display: grid; place-items: center; color: var(--fg); }
+  .new-tag { position: absolute; left: 8px; top: 7px; background: var(--danger); color: var(--surface); border-radius: 6px; padding: 4px 8px; font-size: 9px; font-weight: 700; }
+  .ev-body { padding: 10px 10px 12px; }
+  .ev-time { color: var(--muted); font-size: 9px; margin-bottom: 6px; }
+  .ev-title { font-weight: 650; font-size: 11px; line-height: 1.25; margin-bottom: 5px; }
+  .ev-meta { color: var(--muted); font-size: 9px; margin-bottom: 12px; }
+  .status { display: inline-flex; border-radius: 5px; background: var(--danger-soft); color: var(--danger); padding: 4px 7px; font-size: 9px; font-weight: 650; }
+  .status.med { background: var(--warning-soft); color: var(--warning); }
+  .ai-panel { display: flex; flex-direction: column; gap: 9px; }
+  .ai-panel .alert { min-height: 52px; padding: 9px 10px; grid-template-columns: 20px 1fr auto; }
+  .ai-panel .alert h3 { color: var(--fg); font-size: 10px; margin-bottom: 4px; }
+  .ai-panel .alert p { margin-bottom: 0; }
+
+  @media (max-width: 1180px) {
+    .shell { grid-template-columns: 1fr; }
+    .rail { display: none; }
+    .topbar { min-height: 64px; height: auto; grid-template-columns: 1fr; gap: 10px; padding: 14px 18px; position: static; }
+    h1 { white-space: normal; line-height: 1.15; }
+    .filters, .user-tools { flex-wrap: wrap; }
+    .kpis { grid-template-columns: repeat(4, 1fr); }
+    .main-grid { grid-template-columns: 1fr; }
+    .map-panel { min-height: 420px; }
+    .bottom-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 760px) {
+    .content { padding: 12px; }
+    .kpis { grid-template-columns: 1fr 1fr; }
+    .bottom-grid { grid-template-columns: 1fr; }
+    .evidence-grid { grid-template-columns: 1fr 1fr; }
+    .select, .select.wide { min-width: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+  }
+  .card .divider,
+  .panel .divider { height: 0 !important; background: transparent !important; }
+  .summary-item,
+  .route-info,
+  .kv-grid,
+  .kv-grid > div,
+  .safety-grid,
+  .safety-grid > div,
+  .match-row,
+  .layer-row,
+  .policy-row,
+  .head-grid,
+  .head-grid > div,
+  .evidence-card .e-head,
+  .e-body,
+  .quality-row,
+  .review-row,
+  .lane-row,
+  .ref-row,
+  .event-row,
+  .impact-row,
+  .step-line,
+  .skill-row,
+  .payload-grid,
+  .payload-grid > div,
+  .service-row,
+  .robot-detail-grid > div + div,
+  .card .subpanel,
+  .panel .subpanel {
+    border-top: 0 !important;
+    border-right: 0 !important;
+    border-bottom: 0 !important;
+    border-left: 0 !important;
+  }
+  .step-line.active,
+  .skill-row.selected,
+  .review-row.is-selected,
+  .lane-row.is-selected,
+  .policy-row.is-selected { border: 0 !important; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="i-alert-circle" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></g></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.268 21a2 2 0 0 0 3.464 0m-10.47-5.674A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></symbol>
+  <symbol id="i-bot" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2m16 0h2m-7-1v2m-6-2v2"/></g></symbol>
+  <symbol id="i-chart-bar" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v16a2 2 0 0 0 2 2h16M7 16h8m-8-5h12M7 6h3"/></symbol>
+  <symbol id="i-chevrons-right" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 17l5-5l-5-5m7 10l5-5l-5-5"/></symbol>
+  <symbol id="i-circle-help" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3m.08 4h.01"/></g></symbol>
+  <symbol id="i-clipboard-list" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2m4 7h4m-4 5h4m-8-5h.01M8 16h.01"/></g></symbol>
+  <symbol id="i-crosshair" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M22 12h-4M6 12H2m10-6V2m0 20v-4"/></g></symbol>
+  <symbol id="i-drone" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M10 10L7 7m3 7l-3 3m7-7l3-3m-3 7l3 3M14.205 4.139a4 4 0 1 1 5.439 5.863M19.637 14a4 4 0 1 1-5.432 5.868M4.367 10a4 4 0 1 1 5.438-5.862m-.01 15.724a4 4 0 1 1-5.429-5.873"/><rect width="4" height="8" x="10" y="8" rx="1"/></g></symbol>
+  <symbol id="i-external-link" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 3h6v6m-11 5L21 3m-3 10v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528"/></symbol>
+  <symbol id="i-gauge" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m12 14l4-4M3.34 19a10 10 0 1 1 17.32 0"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></g></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0zm.894.211v15M9 3.236v15"/></symbol>
+  <symbol id="i-monitor" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8m-4-4v4"/></g></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"/></symbol>
+  <symbol id="i-route" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></g></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0a2.34 2.34 0 0 0 3.319 1.915a2.34 2.34 0 0 1 2.33 4.033a2.34 2.34 0 0 0 0 3.831a2.34 2.34 0 0 1-2.33 4.033a2.34 2.34 0 0 0-3.319 1.915a2.34 2.34 0 0 1-4.659 0a2.34 2.34 0 0 0-3.32-1.915a2.34 2.34 0 0 1-2.33-4.033a2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/></g></symbol>
+  <symbol id="i-shield-check" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12l2 2l4-4"/></g></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></g></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></g></symbol>
+  <symbol id="i-triangle-alert" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21.73 18l-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3M12 9v4m0 4h.01"/></symbol>
+  <symbol id="i-truck" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2m10 0H9m10 0h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></g></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M16 3.128a4 4 0 0 1 0 7.744M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></g></symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></symbol>
+</svg>
+
+<main class="shell">
+  <aside class="rail" aria-label="Primary navigation">
+    <div class="brand"><img src="assets/fmg-robot-logo.svg" alt="FMG Robot Ops"></div>
+    <nav class="nav">
+      <a class="nav-item active" aria-label="Home"><svg class="icon lg"><use href="#i-home"></use></svg></a>
+      <a class="nav-item" aria-label="Fleet"><svg class="icon"><use href="#i-truck"></use></svg></a>
+      <a class="nav-item" aria-label="Map"><svg class="icon"><use href="#i-map"></use></svg></a>
+      <a class="nav-item" aria-label="Missions"><svg class="icon"><use href="#i-flag"></use></svg></a>
+      <a class="nav-item" aria-label="Power"><svg class="icon"><use href="#i-zap"></use></svg></a>
+      <a class="nav-item" aria-label="Risk"><svg class="icon"><use href="#i-triangle-alert"></use></svg></a>
+      <a class="nav-item" aria-label="Analytics"><svg class="icon"><use href="#i-chart-bar"></use></svg></a>
+      <a class="nav-item" aria-label="Reports"><svg class="icon"><use href="#i-clipboard-list"></use></svg></a>
+      <a class="nav-item" aria-label="Teams"><svg class="icon"><use href="#i-users"></use></svg></a>
+      <a class="nav-item" aria-label="Settings"><svg class="icon"><use href="#i-settings"></use></svg></a>
+    </nav>
+    <div class="rail-bottom">
+      <button class="collapse" aria-label="Collapse navigation"><svg class="icon sm"><use href="#i-chevrons-right"></use></svg></button>
+      <div class="avatar">AR</div>
+    </div>
+  </aside>
+
+  <section class="workspace" data-od-id="command-center">
+    <header class="topbar">
+      <h1>FMG Embodied Intelligence Platform <span>&mdash; AI Operations Command Center</span></h1>
+      <div class="filters">
+        <div class="select"><div><div class="label">Site</div><div class="value">Pilbara-West</div></div><span class="caret"></span></div>
+        <div class="select"><div class="shift"><svg class="icon"><use href="#i-sun"></use></svg><div><div class="label">Shift</div><div class="value">Day Shift</div></div></div><span class="caret"></span></div>
+        <div class="select wide"><div><div class="label">Scenario</div><div class="value">Conveyor CV-12 acoustic anomaly</div></div><span class="caret"></span></div>
+      </div>
+      <div class="user-tools">
+        <div class="mock"><span class="dot"></span>Mock Data</div>
+        <div class="bell"><svg class="icon"><use href="#i-bell"></use></svg><span class="badge">5</span></div>
+        <svg class="icon"><use href="#i-circle-help"></use></svg>
+        <div class="profile"><div><strong>Alexandra R.</strong><span>Operations Director</span></div><span class="caret"></span></div>
+      </div>
+    </header>
+
+    <div class="content">
+      <section class="kpis" data-od-id="kpi-row">
+        <article class="kpi"><div class="kpi-icon"><svg class="icon"><use href="#i-clipboard-list"></use></svg></div><div><div class="kpi-title">FY25 Shipments</div><div class="kpi-value ok num">142.6 Mt</div><div class="kpi-sub">+4.2% vs plan</div></div></article>
+        <article class="kpi"><div class="kpi-icon"><svg class="icon"><use href="#i-gauge"></use></svg></div><div><div class="kpi-title">Active Missions</div><div class="kpi-value ok num">28</div><div class="kpi-sub">+6 vs yesterday</div></div></article>
+        <article class="kpi risk"><div class="kpi-icon"><svg class="icon"><use href="#i-crosshair"></use></svg></div><div><div class="kpi-title">High-Risk Events</div><div class="kpi-value bad num">4</div><div class="kpi-sub bad">2 require review</div></div></article>
+        <article class="kpi"><div class="kpi-icon"><svg class="icon"><use href="#i-truck"></use></svg></div><div><div class="kpi-title">Fleet Readiness</div><div class="kpi-value ok num">87%</div><div class="kpi-sub">+5% vs yesterday</div></div></article>
+        <article class="kpi warn"><div class="kpi-icon"><svg class="icon"><use href="#i-triangle-alert"></use></svg></div><div><div class="kpi-title">CAS Risk</div><div class="kpi-value warn">Medium</div><div class="kpi-sub warn">Rising</div></div></article>
+        <article class="kpi impact"><div class="kpi-icon"><svg class="icon"><use href="#i-monitor"></use></svg></div><div><div class="kpi-title">Production Impact</div><div class="kpi-value num">3.6 kt</div><div class="kpi-sub bad">At risk</div></div></article>
+        <article class="kpi"><div class="kpi-icon"><svg class="icon"><use href="#i-shield-check"></use></svg></div><div><div class="kpi-title">Safety Score</div><div class="kpi-value ok num">92%</div><div class="kpi-sub">+3% vs yesterday</div></div></article>
+      </section>
+
+      <section class="main-grid" data-od-id="map-and-queue">
+        <article class="panel map-panel" aria-label="Operations map placeholder">
+          <div class="map-surface"></div>
+          <div class="zone"><svg class="icon sm"><use href="#i-triangle-alert"></use></svg> CAS Exclusion Zone</div>
+          <svg class="map-svg" viewBox="0 0 1195 448" preserveAspectRatio="none" aria-hidden="true">
+            <path class="rail-loop" d="M857 146 C965 105 1065 184 1025 278 C999 338 1025 384 1115 414"></path>
+            <path class="route-blue" d="M214 326 C304 335 327 300 347 238 C362 187 447 194 500 187 C563 180 596 171 608 145 C634 92 710 116 740 165 C773 219 775 267 829 281"></path>
+            <path class="route-green" d="M560 348 C557 285 612 236 678 236 C758 236 782 240 852 226 C918 215 960 203 1015 202"></path>
+          </svg>
+          <div class="overview-card">
+            <div class="overview-title">Operations Overview <span class="dot"></span><span class="live">Live</span></div>
+            <div class="kv"><span>Missions in progress</span><strong class="num">12</strong></div>
+            <div class="kv"><span>Robots in operation</span><strong class="num">34</strong></div>
+            <div class="kv"><span>Edge Nodes</span><strong class="good num">18 Online</strong></div>
+            <div class="kv"><span>Comms status</span><strong class="good">Nominal</strong></div>
+            <div class="kv"><span>Weather</span><strong>26&deg;C &middot; Clear</strong></div>
+            <div class="kv"><span>Wind</span><strong>18 km/h NE</strong></div>
+          </div>
+          <div class="marker m-truck"><div class="pin"><svg class="icon"><use href="#i-truck"></use></svg></div><div class="label"><b>AT-32 Haul Truck</b><span>En route &middot; <span class="state">78%</span></span></div></div>
+          <div class="marker m-robot"><div class="pin"><svg class="icon"><use href="#i-target"></use></svg></div><div class="label"><b>Q-07 Quadruped</b><span>Inspection &middot; In progress</span></div></div>
+          <div class="marker m-drone"><div class="pin"><svg class="icon"><use href="#i-drone"></use></svg></div><div class="label"><b>D-12 Drone</b><span>Verification flight</span></div></div>
+          <div class="marker m-risk"><div class="label"><b>Conveyor CV-12</b><span>Acoustic anomaly</span><span class="risk-text">High risk</span></div><div class="pin"><svg class="icon"><use href="#i-alert-circle"></use></svg></div></div>
+          <div class="marker m-edge"><div class="pin"><svg class="icon"><use href="#i-route"></use></svg></div><div class="label"><b>Edge Node 08</b><span class="state">Online</span></div></div>
+          <div class="legend">
+            <span><i class="sw"></i>In Operation</span><span><i class="sw line"></i>En Route</span><span><i class="sw blue"></i>Inspection</span><span><i class="sw grey"></i>Idle</span><span><i class="sw red"></i>High Risk</span><span><i class="sw restrict"></i>Restricted</span>
+          </div>
+          <div class="zoom"><button>+</button><button>&minus;</button><button><svg class="icon sm"><use href="#i-crosshair"></use></svg></button></div>
+        </article>
+
+        <aside class="panel queue">
+          <div class="panel-head"><div class="panel-title">Attention Queue <span class="count">4</span></div><div class="panel-action">View all</div></div>
+          <article class="alert high"><svg class="icon ai"><use href="#i-triangle-alert"></use></svg><div><h3>Conveyor CV-12 Acoustic Anomaly</h3><p>Acoustic signature deviation detected</p><div class="alert-meta"><span>Pilbara-West</span><span>&middot;</span><span>Processing Plant</span><span class="num">2 min ago</span></div><div class="action">Review required</div></div><span class="priority">High</span><span class="next">&rsaquo;</span></article>
+          <article class="alert med"><svg class="icon ai"><use href="#i-triangle-alert"></use></svg><div><h3>CAS Risk Elevating</h3><p>Haul Road B &middot; Light vehicle in exclusion zone</p><div class="alert-meta"><span>Pilbara-West</span><span>&middot;</span><span>HR-02</span><span class="num">5 min ago</span></div><div class="action">Monitor</div></div><span class="priority med">Medium</span><span class="next">&rsaquo;</span></article>
+          <article class="alert high"><svg class="icon ai"><use href="#i-bot"></use></svg><div><h3>Robot Readiness Degraded</h3><p>Q-07 Quadruped &middot; Battery below threshold</p><div class="alert-meta"><span>Pilbara-West</span><span>&middot;</span><span>Inspection Mission</span><span class="num">9 min ago</span></div><div class="action">Action required</div></div><span class="priority">High</span><span class="next">&rsaquo;</span></article>
+          <article class="alert med"><svg class="icon ai"><use href="#i-gauge"></use></svg><div><h3>Production Impact Risk</h3><p>Potential delay in CV-12 throughput</p><div class="alert-meta"><span>Pilbara-West</span><span>&middot;</span><span>Processing Plant</span><span class="num">12 min ago</span></div><div class="action">Assess impact</div></div><span class="priority med">Medium</span><span class="next">&rsaquo;</span></article>
+        </aside>
+      </section>
+
+      <section class="bottom-grid" data-od-id="bottom-panels">
+        <article class="panel card">
+          <div class="panel-head"><div class="panel-title">Fleet Snapshot</div><div class="panel-action">View all &rsaquo;</div></div>
+          <div class="mini-metrics">
+            <div class="mini"><span>Total Assets</span><b class="num">128</b></div>
+            <div class="mini"><span>In Operation</span><b class="num" style="color:var(--accent)">94</b><em>73%</em></div>
+            <div class="mini"><span>En Route</span><b class="num">18</b><em style="color:var(--muted)">14%</em></div>
+            <div class="mini"><span>Idle / Standby</span><b class="num">16</b><em style="color:var(--muted)">13%</em></div>
+          </div>
+          <table>
+            <thead><tr><th style="width:44%">Asset Type</th><th>In Operation</th><th>Health</th><th>Readiness</th></tr></thead>
+            <tbody>
+              <tr><td><span class="asset-cell"><svg class="icon sm"><use href="#i-truck"></use></svg>Haul Trucks</span></td><td class="num">38 / 52</td><td><span class="chip">Good</span></td><td><div class="bar"><i style="width:88%"></i></div></td></tr>
+              <tr><td><span class="asset-cell"><svg class="icon sm"><use href="#i-bot"></use></svg>Quadrupeds</span></td><td class="num">12 / 18</td><td><span class="chip">Good</span></td><td><div class="bar"><i style="width:83%"></i></div></td></tr>
+              <tr><td><span class="asset-cell"><svg class="icon sm"><use href="#i-users"></use></svg>Humanoids</span></td><td class="num">6 / 10</td><td><span class="chip warn">Fair</span></td><td><div class="bar"><i style="width:72%"></i></div></td></tr>
+              <tr><td><span class="asset-cell"><svg class="icon sm"><use href="#i-drone"></use></svg>Drones</span></td><td class="num">8 / 16</td><td><span class="chip">Good</span></td><td><div class="bar"><i style="width:90%"></i></div></td></tr>
+              <tr><td><span class="asset-cell"><svg class="icon sm"><use href="#i-truck"></use></svg>Support Vehicles</span></td><td class="num">30 / 32</td><td><span class="chip">Good</span></td><td><div class="bar"><i style="width:94%"></i></div></td></tr>
+            </tbody>
+          </table>
+        </article>
+
+        <article class="panel card">
+          <div class="panel-head"><div class="panel-title">Spatial Risk Summary</div><div class="panel-action"><span class="dot"></span>Live</div></div>
+          <div class="risk-body">
+            <div class="heat"></div>
+            <div class="risk-list">
+              <div class="risk-row"><span>High Risk Zones</span><b class="num">3</b></div>
+              <div class="risk-row"><span>Medium Risk Zones</span><b class="num">7</b></div>
+              <div class="risk-row"><span>Active Restrictions</span><b class="num">2</b></div>
+              <div class="risk-row"><span>CAS Alerts</span><b class="num">1</b></div>
+              <div class="risk-row"><span>Weather Impact</span><b class="good">Low</b></div>
+            </div>
+          </div>
+          <button class="risk-btn">View Risk Map <svg class="icon sm"><use href="#i-external-link"></use></svg></button>
+        </article>
+
+        <article class="panel card">
+          <div class="panel-head"><div class="panel-title">Recent Evidence</div><div class="panel-action">View all &rsaquo;</div></div>
+          <div class="evidence-grid">
+            <article class="ev"><div class="thumb"><img src="assets/evidence-01.png" alt="CV-12 conveyor evidence"><span class="new-tag">New</span><span class="play"><svg class="icon sm"><use href="#i-play"></use></svg></span></div><div class="ev-body"><div class="ev-time">1 min ago</div><div class="ev-title">CV-12 Acoustic Spike</div><div class="ev-meta">Audio &middot; 18s</div><span class="status">High Risk</span></div></article>
+            <article class="ev"><div class="thumb"><img src="assets/evidence-02.png" alt="Haul road CAS evidence"><span class="play"><svg class="icon sm"><use href="#i-play"></use></svg></span></div><div class="ev-body"><div class="ev-time">3 min ago</div><div class="ev-title">HR-02 CAS Breach</div><div class="ev-meta">Video &middot; 24s</div><span class="status med">Medium</span></div></article>
+            <article class="ev"><div class="thumb"><img src="assets/evidence-03.png" alt="Quadruped telemetry evidence"><span class="play"><svg class="icon sm"><use href="#i-play"></use></svg></span></div><div class="ev-body"><div class="ev-time">7 min ago</div><div class="ev-title">Q-07 Battery Low</div><div class="ev-meta">Telemetry &middot; 12s</div><span class="status">High Risk</span></div></article>
+            <article class="ev"><div class="thumb"><img src="assets/evidence-04.png" alt="Plant throughput evidence"><span class="play"><svg class="icon sm"><use href="#i-play"></use></svg></span></div><div class="ev-body"><div class="ev-time">12 min ago</div><div class="ev-title">Plant Throughput Dip</div><div class="ev-meta">SCADA &middot; 30s</div><span class="status med">Medium</span></div></article>
+          </div>
+        </article>
+
+        <article class="panel card ai-panel">
+          <div class="panel-head"><div class="panel-title">AI Recommendation Queue</div><div class="panel-action">View all &rsaquo;</div></div>
+          <article class="alert high"><svg class="icon ai"><use href="#i-triangle-alert"></use></svg><div><h3>Investigate CV-12 acoustic anomaly</h3><p>Dispatch drone + edge analytics</p></div><span class="priority">High</span><span class="action">Review required</span></article>
+          <article class="alert med"><svg class="icon ai"><use href="#i-gauge"></use></svg><div><h3>Re-route light vehicle from HR-02</h3><p>Update CAS geofence</p></div><span class="priority med">Medium</span><span class="action">Awaiting approval</span></article>
+          <article class="alert low"><svg class="icon ai"><use href="#i-shield-check"></use></svg><div><h3>Assign Q-07 to charging station</h3><p>Optimize mission continuation</p></div><span class="priority low">Low</span><span class="action">In progress</span></article>
+          <article class="alert"><svg class="icon ai"><use href="#i-shield-check"></use></svg><div><h3>Adjust CV-12 throughput setpoint</h3><p>Minimize production impact</p></div><span class="priority low" style="color:var(--muted);background:color-mix(in oklch,var(--border) 62%,var(--surface))">Queued</span></article>
+        </article>
+      </section>
+    </div>
+  </section>
+</main>
+</body>
+</html>

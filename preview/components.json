@@ -1,0 +1,92 @@
+{
+  "sourceScreens": [
+    "mp1joq1r-image.png",
+    "mp1kjp4r-image2.png",
+    "mp1kkaeu-image3.png",
+    "mp1kkjdk-image4.png",
+    "mp1kv65q-image5.png",
+    "mp1kv663-image6.png"
+  ],
+  "archetype": "industrial embodied-intelligence operations console",
+  "tokens": {
+    "canvas": { "width": 1672, "height": 941 },
+    "railWidth": 82,
+    "topbarHeight": 64,
+    "contentPadding": { "x": 18, "y": 14 },
+    "gap": { "tight": 8, "default": 12, "section": 16 },
+    "radius": { "chip": 5, "control": 8, "card": 12 },
+    "border": "1px solid var(--border)",
+    "shadow": "0 10px 28px var(--shadow)"
+  },
+  "components": {
+    "appShell": {
+      "evidenced": true,
+      "layout": "82px rail + 64px topbar + scrollable dense content"
+    },
+    "metricCard": {
+      "evidenced": true,
+      "height": "70-82px",
+      "padding": "12-16px",
+      "variants": ["success", "warning", "danger", "info", "purple"]
+    },
+    "summaryStrip": {
+      "evidenced": true,
+      "height": "94-100px",
+      "layout": "segmented horizontal summary with vertical dividers"
+    },
+    "mapPlaceholder": {
+      "evidenced": true,
+      "rules": ["terrain-tinted background", "dashed routes", "semantic zones", "floating labels", "bottom legend"],
+      "inferred": ["exact terrain texture", "exact route geometry"]
+    },
+    "rightStack": {
+      "evidenced": true,
+      "width": "260-470px depending on page",
+      "gap": "10-12px",
+      "rowDensity": "compact"
+    },
+    "dataTable": {
+      "evidenced": true,
+      "rowHeight": "28-38px",
+      "fontSize": "9-11px",
+      "rules": ["fixed table layout", "hairline row dividers", "no zebra striping", "status chips in final columns"]
+    },
+    "evidenceTile": {
+      "evidenced": true,
+      "imagePolicy": "crop from screenshots or use generated mock asset",
+      "metadata": ["title", "timestamp", "capture type", "status"]
+    },
+    "actionButton": {
+      "evidenced": true,
+      "height": "34-42px",
+      "variants": ["primaryGreen", "outline", "warningSoft", "dangerSolid", "dangerSoft", "blueSoft"]
+    }
+  },
+  "pages": [
+    {
+      "id": "mission-orchestration",
+      "reference": "mp1kjp4r-image2.png",
+      "layout": "summary strip, mission plan cards, route map placeholder, right recommendation stack, timeline"
+    },
+    {
+      "id": "spatial-intelligence",
+      "reference": "mp1kkaeu-image3.png",
+      "layout": "KPI row, layer sidebar, large map placeholder, policy/conflict/action side panel, bottom tables"
+    },
+    {
+      "id": "inspection-anomaly",
+      "reference": "mp1kkjdk-image4.png",
+      "layout": "anomaly hero summary, evidence grid, right actions and quality stack, bottom analysis/reference cards"
+    },
+    {
+      "id": "emergency-intervention",
+      "reference": "mp1kv65q-image5.png",
+      "layout": "execution status row, step timeline, robot unit cards, live feeds, safety side stack, emergency controls"
+    },
+    {
+      "id": "skill-registry",
+      "reference": "mp1kv663-image6.png",
+      "layout": "KPI row, taxonomy list, skill detail, compatibility matrix, right evidence/safety/readiness panels"
+    }
+  ]
+}

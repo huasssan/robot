@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FMG Robot L5 Supplement - UC Pages and Mock Data</title>
+  <style>
+    :root {
+      --bg: #f5f7f8;
+      --ink: #172126;
+      --muted: #60727c;
+      --surface: #ffffff;
+      --surface-2: #edf3f4;
+      --line: #d8e2e4;
+      --accent: #0f7b8c;
+      --accent-dark: #104f5d;
+      --green: #1f8a5b;
+      --orange: #b96f12;
+      --red: #b93838;
+      --blue: #2563eb;
+      --purple: #6d4bd7;
+      --shadow: 0 16px 36px rgba(20, 34, 40, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(15, 123, 140, 0.08), rgba(15, 123, 140, 0) 300px),
+        var(--bg);
+      font: 15px/1.66 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      letter-spacing: 0;
+    }
+
+    header {
+      padding: 42px 56px 46px;
+      color: #fff;
+      background: linear-gradient(135deg, #102f39, #0f7b8c);
+    }
+
+    header p {
+      max-width: 1160px;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 16px;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 1180px;
+      margin: 0 0 14px;
+      font-size: 34px;
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    main {
+      width: min(1320px, calc(100% - 48px));
+      margin: 28px auto 72px;
+    }
+
+    section {
+      margin: 18px 0;
+      padding: 28px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    h2 {
+      margin: 0 0 16px;
+      font-size: 22px;
+      line-height: 1.3;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 24px 0 10px;
+      font-size: 17px;
+      line-height: 1.35;
+      letter-spacing: 0;
+    }
+
+    p { margin: 8px 0 12px; }
+
+    a {
+      color: var(--accent-dark);
+      text-decoration: none;
+      border-bottom: 1px dotted rgba(15, 123, 140, 0.45);
+    }
+
+    table {
+      width: 100%;
+      margin: 12px 0 20px;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: #21313a;
+      background: var(--surface-2);
+      font-weight: 800;
+    }
+
+    pre, code {
+      font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+      font-size: 13px;
+    }
+
+    pre {
+      overflow: auto;
+      margin: 12px 0 18px;
+      padding: 16px;
+      color: #e8f7fa;
+      background: #10232b;
+      border: 1px solid #24434d;
+      border-radius: 10px;
+      line-height: 1.55;
+    }
+
+    .toc {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .note, .warning {
+      margin: 14px 0;
+      padding: 13px 15px;
+      border-radius: 9px;
+    }
+
+    .note {
+      color: #21414a;
+      background: #eef8fa;
+      border-left: 4px solid var(--accent);
+    }
+
+    .warning {
+      background: #fff8e9;
+      border-left: 4px solid var(--orange);
+    }
+
+    .tag {
+      display: inline-block;
+      margin: 0 4px 4px 0;
+      padding: 2px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.75;
+      white-space: nowrap;
+    }
+
+    .tag.green { color: var(--green); background: #eaf7f0; border: 1px solid #bfe6cf; }
+    .tag.orange { color: var(--orange); background: #fff5df; border: 1px solid #efd697; }
+    .tag.red { color: var(--red); background: #fff0f0; border: 1px solid #e9b8b8; }
+    .tag.blue { color: var(--blue); background: #eff6ff; border: 1px solid #bfdbfe; }
+    .tag.purple { color: var(--purple); background: #f4f0ff; border: 1px solid #d8caff; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin: 14px 0 18px;
+    }
+
+    .card {
+      min-height: 118px;
+      padding: 16px;
+      background: #fbfcfd;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+    }
+
+    .card h3 { margin-top: 0; }
+
+    .mermaid-panel {
+      margin: 14px 0 18px;
+      padding: 16px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+    }
+
+    pre.mermaid {
+      min-height: 240px;
+      margin: 0;
+      padding: 18px;
+      color: var(--ink);
+      background: #fff;
+      border: 0;
+      text-align: center;
+    }
+
+    @media (max-width: 1050px) {
+      header { padding: 34px 24px; }
+      main { width: min(100% - 24px, 1320px); }
+      section { padding: 20px; }
+      .toc, .grid { grid-template-columns: 1fr; }
+      table { font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <p class="eyebrow">L5 Supplement · UC Pages and Mock Data · 2026-05-12</p>
+    <h1>FMG Robot L5 结构补充：新增页面与 Mock 数据细节</h1>
+    <p>本补充只处理 L5 界面蓝图层：基于现有 L5 页面组件逻辑，补齐 previous idea 的两个 use case，以及生产计划变化引起巡检变更的新增详情页和 mock data contract。不在这里定义视觉风格、UI token 或真实后端实现。</p>
+  </header>
+
+  <main>
+    <section id="toc">
+      <h2>文档导航</h2>
+      <div class="toc">
+        <a href="#contract">0. Scope Contract</a>
+        <a href="#page-tree">1. 页面树</a>
+        <a href="#frame-tree">2. Frame Tree</a>
+        <a href="#page-specs">3. 页面职责说明表</a>
+        <a href="#mapping">4. 页面与业务节点映射</a>
+        <a href="#states">5. 页面状态矩阵</a>
+        <a href="#transitions">6. 页面跳转关系</a>
+        <a href="#wireframe">7. 低保真 Wireframe</a>
+        <a href="#mockdata">8. Mock Data Contract</a>
+      </div>
+    </section>
+
+    <section id="contract">
+      <h2>0. Scope Contract</h2>
+      <div class="warning">
+        <strong>补充结论：</strong>这次补充引入 3 个下钻详情页，但不新增一级导航。它们是为了让今天讨论明确覆盖 UC1、UC2 和生产计划变化巡检，不改变现有 L5 的一级页面结构。
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>项</th>
+            <th>结论</th>
+            <th>说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>是否改变一级页面树</td>
+            <td><span class="tag green">否</span></td>
+            <td>仍以 Command Center、Mission、Spatial、Anomaly、Emergency、Skill、Robot、Evaluation、Visual Data 为主体。</td>
+          </tr>
+          <tr>
+            <td>是否新增页面职责</td>
+            <td><span class="tag orange">是</span></td>
+            <td>新增 3 个详情页：On-site Anomaly Task Detail、Weather Emergency Dispatch Detail、Production Plan Change Inspection Detail。</td>
+          </tr>
+          <tr>
+            <td>是否改变安全口径</td>
+            <td><span class="tag orange">需要确认</span></td>
+            <td>UC2 原始想法偏全自动，L5 建议改成 auto-dispatch candidate + HITL gated，避免承诺无人审批的高风险物理处置。</td>
+          </tr>
+          <tr>
+            <td>native HTML 要补什么</td>
+            <td><span class="tag blue">补 mock 数据和下钻视图</span></td>
+            <td>至少补 3 个 attention item、3 个详情对象、对应 route/link、页面渲染函数或页面状态卡片。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="page-tree">
+      <h2>1. 页面树</h2>
+      <pre><code>FMG Embodied Intelligence Platform
+├─ 0. Global Shell
+│  ├─ Global attention queue
+│  ├─ Current mission context
+│  └─ Mock boundary indicator
+├─ 1. AI Operations Command Center
+│  ├─ Existing: CV-12 acoustic anomaly attention
+│  ├─ Existing: CAS route risk attention
+│  ├─ New: UC1 Patrol Anomaly Alert
+│  ├─ New: UC2 Weather + Critical Equipment Alert
+│  └─ New: Production Plan Change Attention
+├─ 2. Mission Orchestration Center
+│  ├─ Existing: mission graph / route plan / robot match / HITL drawer
+│  ├─ New child: On-site Anomaly follow-up mission
+│  └─ New child: Plan change generated inspection plan version
+├─ 3. Spatial Intelligence
+│  ├─ Existing: 3D map / route conflict / safe corridor
+│  └─ New child: Production Plan Change Inspection Detail
+├─ 4. Inspection / Anomaly Detail
+│  ├─ Existing: CV-12 anomaly overview
+│  └─ New child: On-site Anomaly Task Detail
+├─ 5. Emergency Intervention Detail
+│  ├─ Existing: physical step checklist / edge runtime / safety gate
+│  └─ New child: Weather Emergency Dispatch Detail
+├─ 6. Skill Registry
+│  └─ Existing + new UC2 physical action skills
+├─ 7. Robot Capability Profile
+│  └─ Existing + UC1/UC2 robot readiness context
+├─ 8. Capability Evaluation
+│  └─ Existing P0.5 support page
+└─ 9. Visual Data Intelligence
+   ├─ Existing evidence repository / timeline replay
+   └─ New evidence packages for UC1, UC2 and plan-change decisions</code></pre>
+
+      <div class="mermaid-panel">
+        <pre class="mermaid">flowchart TB
+  A["Command Center"] --> B["UC1 Patrol Anomaly Alert"]
+  A --> C["UC2 Weather + Critical Alert"]
+  A --> D["Production Plan Change Attention"]
+  B --> E["On-site Anomaly Task Detail"]
+  C --> F["Weather Emergency Dispatch Detail"]
+  D --> G["Production Plan Change Inspection Detail"]
+  E --> H["Mission Orchestration"]
+  E --> I["Visual Data Intelligence"]
+  F --> J["Emergency Intervention"]
+  F --> K["Skill / Robot Match"]
+  G --> L["Spatial Intelligence"]
+  G --> H
+  J --> I
+  L --> I</pre>
+      </div>
+    </section>
+
+    <section id="frame-tree">
+      <h2>2. Frame Tree</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>页面</th>
+            <th>Frame Tree</th>
+            <th>复用现有 L5 组件</th>
+            <th>新增组件</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>On-site Anomaly Task Detail</td>
+            <td>Page -> Task Header -> Anomaly Queue -> Evidence Focus -> Robot Context -> Control Policy -> Patrol Report Draft -> Action Bar</td>
+            <td>Anomaly Header、Evidence Tabs、Robot Status、Mission Link、Safety Gate、Timeline Replay。</td>
+            <td>Anomaly Queue、Inspect Closer、Capture Evidence、Remote Control Policy、Patrol Report Draft。</td>
+          </tr>
+          <tr>
+            <td>Weather Emergency Dispatch Detail</td>
+            <td>Page -> Weather + Asset Header -> Auto-dispatch Candidate -> Physical Action Procedure -> Robot / Skill Match -> Safety Gate -> Execution Monitor -> Verification Panel</td>
+            <td>Emergency Header、Physical Step Checklist、Robot Match、Skill Registry、Safety Gate、Edge Runtime、Mission Controls、Verification Panel。</td>
+            <td>Weather Threshold Panel、Critical Equipment Alert、Auto-dispatch Candidate、HITL Mode Toggle、Physical Action Risk Matrix。</td>
+          </tr>
+          <tr>
+            <td>Production Plan Change Inspection Detail</td>
+            <td>Page -> Plan Delta Header -> Affected Inspection Tasks -> Route Conflict Map -> Inspection Plan Change -> Decision Ledger -> Downstream Updates</td>
+            <td>Spatial Map、Route Plan、Collision Risk、Mission Graph、Safety Gate、Action Bar、Timeline Replay。</td>
+            <td>Plan Delta Compare、Affected Tasks Matrix、Route Change Diff、Inspection Plan Version、Decision Ledger。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="page-specs">
+      <h2>3. 页面职责说明表</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>页面名称</th>
+            <th>页面类型</th>
+            <th>页面目标</th>
+            <th>关键输入</th>
+            <th>关键输出</th>
+            <th>关键操作</th>
+            <th>进入条件</th>
+            <th>跳转去向</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>On-site Anomaly Task Detail</td>
+            <td>现场巡检异常详情页</td>
+            <td>让操作员逐个处理机器狗巡检中发现的异常，完成靠近复查、证据采集、报告生成和后续任务创建。</td>
+            <td>PatrolMission、PatrolAnomaly[]、EvidenceRef[]、RobotState、ControlPolicy。</td>
+            <td>PatrolReportDraft、FollowupMissionDraft、EvidencePackage、OperatorDecision。</td>
+            <td>Select anomaly、Inspect Closer、Capture Evidence、Pause Patrol、Hold Position、Create Follow-up Mission。</td>
+            <td>机器狗执行巡检 mission，且现场产生至少一个 anomaly。</td>
+            <td>Mission、Robot Profile、Visual Data、Spatial。</td>
+          </tr>
+          <tr>
+            <td>Weather Emergency Dispatch Detail</td>
+            <td>极端天气应急派发详情页</td>
+            <td>把天气阈值和设备 CRITICAL 告警转成应急 mission candidate，并明确机器人匹配、物理动作步骤和 HITL 安全边界。</td>
+            <td>WeatherRiskEvent、CriticalEquipmentAlert、EmergencyMission、SkillMatch、RobotMatch、SafetyGate。</td>
+            <td>DispatchDecision、ApprovalRecord、PhysicalActionExecution、VerificationEvidence。</td>
+            <td>Approve Candidate、Change Robot、Approve Step、Set HITL Mode、Safe Stop、E-stop、Verify Result。</td>
+            <td>天气阈值超限且关键设备进入 CRITICAL 状态。</td>
+            <td>Emergency Intervention、Skill Registry、Robot Profile、Visual Data。</td>
+          </tr>
+          <tr>
+            <td>Production Plan Change Inspection Detail</td>
+            <td>计划变化巡检重编排详情页</td>
+            <td>解释生产计划变化如何影响巡检任务、路线、空间风险和人工决策，完成新巡检计划确认。</td>
+            <td>ProductionPlanDelta、AffectedInspectionTask[]、RoutePlan、SpatialConflictSet、SafeCorridorOption[]。</td>
+            <td>InspectionPlanChange、RouteDecision、OperatorDecision、DownstreamMissionUpdates。</td>
+            <td>Compare Versions、Recalculate Route、Select Corridor、Approve New Plan、Hold Affected Missions、Rollback。</td>
+            <td>生产计划、爆破窗口、货车优先级或区域策略发生变化，且影响未完成巡检任务。</td>
+            <td>Mission、Spatial、Command Center、Visual Data。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="mapping">
+      <h2>4. 页面与业务节点映射</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>页面</th>
+            <th>承载 L3 节点</th>
+            <th>回答的业务问题</th>
+            <th>为什么不能只靠现有页</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>On-site Anomaly Task Detail</td>
+            <td>B01 事件进入、B02 AI 判断、B03 Mission 生成、B07 执行监控、B08 证据回收。</td>
+            <td>机器狗已经在现场巡检，发现多个异常后，操作员如何逐个核查、取证、暂停和生成后续任务？</td>
+            <td>现有 Anomaly Detail 以单个 CV-12 异常为中心，缺少巡检现场产生多个 anomaly 后的队列和控制动作。</td>
+          </tr>
+          <tr>
+            <td>Weather Emergency Dispatch Detail</td>
+            <td>B01 事件进入、B03 Mission 生成、B05 能力匹配、B06 HITL、B07 执行监控。</td>
+            <td>天气超阈值和设备 CRITICAL 告警同时发生时，系统如何推荐人形机器人执行物理动作，同时守住安全审批边界？</td>
+            <td>现有 Emergency Detail 有执行态，但缺少 weather trigger、critical asset trigger 和 full-auto/HITL 口径决策。</td>
+          </tr>
+          <tr>
+            <td>Production Plan Change Inspection Detail</td>
+            <td>B01 事件进入、B04 空间规划、B04A 边缘安全、B06 HITL、B07 执行更新。</td>
+            <td>生产计划变化如何影响巡检计划、机器人路线和空间安全，谁确认变更，变更后下发什么？</td>
+            <td>现有 Spatial 页能解释路线冲突，但不能完整解释 plan delta、affected tasks、inspection plan version 和 decision ledger。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="states">
+      <h2>5. 页面状态矩阵</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>页面</th>
+            <th>Default</th>
+            <th>Review / Approval</th>
+            <th>Blocked / Risk</th>
+            <th>Empty / Loading / Error</th>
+            <th>Permission</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>On-site Anomaly Task Detail</td>
+            <td>显示巡检 mission、异常队列、当前 evidence 和机器人状态。</td>
+            <td>anomaly 等待 operator review，follow-up mission 待确认。</td>
+            <td>机器人进入 restricted zone 风险、PHM 降级、证据质量不足。</td>
+            <td>无 anomaly、证据加载中、media load failed、robot telemetry missing。</td>
+            <td>远控、暂停和创建 mission 需要 Site Safety Lead 或 Dispatcher 权限。</td>
+          </tr>
+          <tr>
+            <td>Weather Emergency Dispatch Detail</td>
+            <td>显示 weather threshold、critical alert、dispatch candidate 和物理步骤。</td>
+            <td>auto-dispatch candidate 等待 human gate；物理动作逐步审批。</td>
+            <td>天气严重到禁止派发、通信降级、机器人不满足 weather-rated skill、E-stop active。</td>
+            <td>天气源缺失、设备告警缺失、候选机器人为空、执行证据缺失。</td>
+            <td>Approve physical action、safe stop、E-stop 分别需要不同安全权限。</td>
+          </tr>
+          <tr>
+            <td>Production Plan Change Inspection Detail</td>
+            <td>显示 plan delta、affected tasks、route conflict 和新巡检计划。</td>
+            <td>新 plan version 待批准；safe corridor 待选择。</td>
+            <td>路线不可行、blast zone 冲突、CAS 20m 冲突、任务必须 hold。</td>
+            <td>无受影响任务、计划源加载中、route calculation failed、spatial map stale。</td>
+            <td>Approve New Plan、Rollback、Hold Missions 需要 Dispatcher 或 Site Safety Lead 权限。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="transitions">
+      <h2>6. 页面跳转关系</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>起点</th>
+            <th>触发</th>
+            <th>目标</th>
+            <th>路由参数</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Command Center</td>
+            <td>点击 Patrol Anomaly Alert</td>
+            <td>On-site Anomaly Task Detail</td>
+            <td><code>?page=patrol_anomaly&amp;task_id=PATROL-TASK-QDP14-021</code></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>On-site Anomaly Task Detail</td>
+            <td>点击 Create Follow-up Mission</td>
+            <td>Mission Orchestration</td>
+            <td><code>?page=mission&amp;mission_id=MS-PTRL-FOLLOWUP-021</code></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Command Center</td>
+            <td>点击 Weather + Critical Equipment Alert</td>
+            <td>Weather Emergency Dispatch Detail</td>
+            <td><code>?page=weather_emergency&amp;emergency_id=EMG-WTHR-PUMP-008</code></td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>Weather Emergency Dispatch Detail</td>
+            <td>点击 Approve Candidate</td>
+            <td>Emergency Intervention</td>
+            <td><code>?page=emergency&amp;mission_id=MS-EMG-PUMP-008</code></td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>Command Center / Spatial</td>
+            <td>点击 Production Plan Change Attention</td>
+            <td>Production Plan Change Inspection Detail</td>
+            <td><code>?page=plan_change&amp;plan_delta_id=PLAN-DELTA-20260512-017</code></td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>Production Plan Change Inspection Detail</td>
+            <td>点击 Recalculate Route / Approve New Plan</td>
+            <td>Spatial / Mission</td>
+            <td><code>?page=spatial&amp;route_id=RT-PLAN-017</code> 或 <code>?page=mission&amp;mission_id=MS-20402</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="wireframe">
+      <h2>7. 低保真 Wireframe 说明</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>On-site Anomaly Task Detail</h3>
+          <pre><code>Header: patrol mission context
+Left: anomaly queue
+Center: selected anomaly evidence
+Right: robot state + control policy
+Bottom: patrol report draft + actions</code></pre>
+        </div>
+        <div class="card">
+          <h3>Weather Emergency Dispatch Detail</h3>
+          <pre><code>Header: weather + critical asset
+Left: threshold evidence
+Center: action procedure
+Right: robot/skill candidate + safety gate
+Bottom: execution monitor + verification</code></pre>
+        </div>
+        <div class="card">
+          <h3>Production Plan Change Inspection Detail</h3>
+          <pre><code>Header: plan delta
+Left: affected inspection tasks
+Center: route conflict map
+Right: corridor options + approval
+Bottom: decision ledger + updates</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="mockdata">
+      <h2>8. Mock Data Contract</h2>
+      <div class="note">
+        <strong>native HTML 最小改动范围：</strong>在现有 <code>mockStore.entities</code> 中补充 <code>attentionItems</code>、<code>patrolTaskDetails</code>、<code>weatherEmergencyDetails</code>、<code>planChangeInspectionDetails</code>，并新增 3 个 route/page renderer 或用现有 renderer 增强为详情视图。
+      </div>
+      <pre><code>{
+  "attentionItems": [
+    {
+      "attentionId": "ATT-PTRL-ANOM-021",
+      "priority": "P1",
+      "title": "Patrol anomaly cluster detected",
+      "useCase": "UC1_patrol_anomaly",
+      "targetPage": "patrol_anomaly",
+      "targetId": "PATROL-TASK-QDP14-021",
+      "recommendedAction": "Review anomaly queue and capture evidence"
+    },
+    {
+      "attentionId": "ATT-WTHR-CRIT-008",
+      "priority": "P0",
+      "title": "Weather threshold exceeded + critical pump alert",
+      "useCase": "UC2_weather_emergency_dispatch",
+      "targetPage": "weather_emergency",
+      "targetId": "EMG-WTHR-PUMP-008",
+      "recommendedAction": "Approve auto-dispatch candidate with HITL gate"
+    },
+    {
+      "attentionId": "ATT-PLAN-CHG-017",
+      "priority": "P1",
+      "title": "Production plan change impacts inspection route",
+      "useCase": "production_plan_change_inspection",
+      "targetPage": "plan_change",
+      "targetId": "PLAN-DELTA-20260512-017",
+      "recommendedAction": "Review affected inspections and approve new plan"
+    }
+  ],
+  "patrolTaskDetails": {
+    "PATROL-TASK-QDP14-021": {
+      "taskId": "PATROL-TASK-QDP14-021",
+      "missionId": "MS-PTRL-6103",
+      "robotId": "RB-QDP-14",
+      "routeId": "RT-PTRL-CV12-NORTH",
+      "currentWaypoint": "CV12-N-04",
+      "anomalyCount": 3,
+      "highestSeverity": "high",
+      "anomalies": [
+        {"anomalyId": "ANOM-021-A", "type": "thermal_hotspot", "severity": "high", "confidence": 0.87, "distanceM": 4.8, "status": "needs_closer_inspection", "evidenceRefs": ["EV-PTRL-021-IMG", "EV-PTRL-021-THM"]},
+        {"anomalyId": "ANOM-021-B", "type": "loose_guard", "severity": "medium", "confidence": 0.73, "distanceM": 8.2, "status": "evidence_captured", "evidenceRefs": ["EV-PTRL-021-VIS"]},
+        {"anomalyId": "ANOM-021-C", "type": "fluid_leak_candidate", "severity": "medium", "confidence": 0.68, "distanceM": 11.5, "status": "operator_review", "evidenceRefs": ["EV-PTRL-021-LIDAR"]}
+      ],
+      "controlPolicy": {
+        "allowedActions": ["inspect_closer", "capture_evidence", "hold_position", "create_followup_mission"],
+        "blockedActions": ["enter_restricted_zone_without_approval"],
+        "safeDistanceM": 3,
+        "requiredRole": "Site Safety Lead"
+      },
+      "patrolReportDraft": {
+        "summary": "QDP-14 detected three anomaly candidates along CV-12 north corridor.",
+        "recommendedActions": ["closer inspection for thermal hotspot", "create follow-up maintenance mission"],
+        "datasetTags": ["patrol_anomaly", "thermal_hotspot", "cv12"]
+      }
+    }
+  },
+  "weatherEmergencyDetails": {
+    "EMG-WTHR-PUMP-008": {
+      "emergencyId": "EMG-WTHR-PUMP-008",
+      "weatherRiskEvent": {
+        "windGustKmh": 82,
+        "lightningDistanceKm": 7.4,
+        "rainRateMmH": 18,
+        "visibilityM": 420,
+        "thresholdExceeded": ["wind_gust", "lightning_distance", "visibility"]
+      },
+      "criticalEquipmentAlert": {
+        "assetId": "PUMP-STN-04",
+        "severity": "CRITICAL",
+        "alarm": "pressure_trip_lockout",
+        "recommendedPhysicalActions": ["open_cabinet", "press_reset_button", "turn_bypass_valve", "verify_status_indicator"]
+      },
+      "dispatchCandidate": {
+        "missionId": "MS-EMG-PUMP-008",
+        "robotId": "RB-HMD-02",
+        "skills": ["Weather-rated Mobility", "Dexterous Manipulation", "Panel Operation"],
+        "mode": "auto_dispatch_candidate_hitl_required",
+        "confidence": 0.81,
+        "requiresApproval": true
+      },
+      "safetyGate": {
+        "state": "pending",
+        "requiredRole": "Site Safety Lead",
+        "allowedActions": ["approve_candidate", "change_robot", "hold_dispatch", "e_stop"],
+        "blockedActions": ["full_auto_physical_action_without_approval"]
+      }
+    }
+  },
+  "planChangeInspectionDetails": {
+    "PLAN-DELTA-20260512-017": {
+      "planDeltaId": "PLAN-DELTA-20260512-017",
+      "previousVersion": "PROD-PLAN-DAY-v18",
+      "newVersion": "PROD-PLAN-DAY-v19",
+      "changeReason": "Haul Road B priority shift and blast window update",
+      "effectiveWindow": "2026-05-12T13:00:00+08:00/2026-05-12T18:00:00+08:00",
+      "affectedInspectionTasks": [
+        {"missionId": "MS-20402", "asset": "Haul Road B CAS corridor", "impactReason": "service route intersects updated haul priority", "recommendedAction": "recalculate_route"},
+        {"missionId": "MS-PTRL-6103", "asset": "CV-12 north belt corridor", "impactReason": "inspection window overlaps blast exclusion preparation", "recommendedAction": "reschedule_and_hold"}
+      ],
+      "safeCorridorOptions": [
+        {"corridorId": "SC-HR02-A", "risk": "medium", "etaDeltaMin": 9, "approvalRequired": true},
+        {"corridorId": "SC-HR02-B", "risk": "low", "etaDeltaMin": 17, "approvalRequired": false}
+      ],
+      "operatorDecision": {
+        "state": "awaiting_approval",
+        "allowedActions": ["approve_new_plan", "request_replan", "hold_affected_missions", "rollback_plan_change"]
+      }
+    }
+  }
+}</code></pre>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({
+        startOnLoad: false,
+        securityLevel: "loose",
+        theme: "base",
+        themeVariables: {
+          primaryColor: "#eef8fa",
+          primaryBorderColor: "#0f7b8c",
+          primaryTextColor: "#172126",
+          lineColor: "#60727c",
+          fontFamily: "-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, Microsoft YaHei, Arial, sans-serif"
+        },
+        flowchart: {
+          htmlLabels: true,
+          curve: "basis"
+        }
+      });
+      mermaid.run({ querySelector: ".mermaid" }).catch((error) => {
+        console.warn("Mermaid render failed", error);
+      });
+    }
+  </script>
+</body>
+</html>

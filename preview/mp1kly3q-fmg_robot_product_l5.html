@@ -1,0 +1,1118 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FMG Embodied Intelligence Product L5</title>
+  <style>
+    :root {
+      --bg: #f5f7f8;
+      --ink: #172026;
+      --muted: #61717a;
+      --surface: #ffffff;
+      --surface-2: #eef3f4;
+      --line: #d8e1e4;
+      --accent: #0f7b8c;
+      --accent-2: #155e75;
+      --ok: #1f8a5b;
+      --warn: #af7a19;
+      --risk: #b93838;
+      --blue: #2563eb;
+      --shadow: 0 18px 45px rgba(23, 32, 38, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 15px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+    }
+    header {
+      background: linear-gradient(135deg, #0f3340, #0f7b8c);
+      color: #fff;
+      padding: 42px 56px;
+    }
+    header .eyebrow {
+      opacity: .78;
+      font-size: 13px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 10px 0 12px;
+      font-size: 34px;
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+    header p { max-width: 1160px; margin: 0; color: rgba(255,255,255,.88); font-size: 16px; }
+    main { width: min(1260px, calc(100% - 48px)); margin: 28px auto 64px; }
+    section {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+      margin: 18px 0;
+    }
+    h2 { margin: 0 0 16px; font-size: 22px; line-height: 1.25; }
+    h3 { margin: 24px 0 10px; font-size: 17px; line-height: 1.35; }
+    h4 { margin: 20px 0 8px; font-size: 15px; line-height: 1.35; color: #21313a; }
+    p { margin: 8px 0 12px; }
+    ul, ol { margin: 8px 0 12px 22px; padding: 0; }
+    li { margin: 5px 0; }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 14px; }
+    th, td { border: 1px solid var(--line); padding: 10px 12px; vertical-align: top; text-align: left; }
+    th { background: var(--surface-2); color: #21313a; font-weight: 700; }
+    code, pre { font-family: "SFMono-Regular", Menlo, Consolas, monospace; font-size: 13px; }
+    pre {
+      overflow: auto;
+      background: #10232b;
+      color: #e8f7fa;
+      border-radius: 10px;
+      padding: 16px;
+      border: 1px solid #25434c;
+      line-height: 1.55;
+    }
+    .note, .warning {
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin: 14px 0;
+    }
+    .note { border-left: 4px solid var(--accent); background: #eef8fa; color: #21414a; }
+    .warning { border-left: 4px solid var(--warn); background: #fff8e8; }
+    .tag {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 2px 9px;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.7;
+      white-space: nowrap;
+    }
+    .tag.ok { color: var(--ok); background: #eaf7f0; border: 1px solid #bfe6cf; }
+    .tag.warn { color: var(--warn); background: #fff6df; border: 1px solid #efd697; }
+    .tag.risk { color: var(--risk); background: #fff0f0; border: 1px solid #e9b8b8; }
+    .tag.blue { color: var(--blue); background: #eff6ff; border: 1px solid #bfdbfe; }
+    .toc { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 18px; margin-top: 12px; }
+    .toc a { color: var(--accent-2); text-decoration: none; border-bottom: 1px dotted rgba(21,94,117,.35); }
+    .small { color: var(--muted); font-size: 13px; }
+    @media (max-width: 900px) {
+      header { padding: 32px 24px; }
+      main { width: min(100% - 24px, 1260px); }
+      section { padding: 20px; }
+      .toc { grid-template-columns: 1fr; }
+      table { font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="eyebrow">Product L5 · Interface Blueprint · Review Draft · v0.1</div>
+    <h1>FMG Embodied Intelligence Platform 产品 L5 界面蓝图层</h1>
+    <p>本文件基于 <code>fmg_robot_product_l4.html</code> 串行生成，把 L4 的处理节点、逻辑表、状态校验和输出样例转化为页面树、Frame Tree、页面职责、功能细节、状态矩阵、页面跳转关系和页面级 mockdata。本层不定义最终 UI token、颜色、字体、具体尺寸或像素位置，只给建议功能位置。</p>
+  </header>
+
+  <main>
+    <section id="meta">
+      <h2>0. 生成链路与控制状态</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>项目</th>
+            <th>值</th>
+            <th>说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>上游文件</td>
+            <td><code>codex_solution/fmg_robot_product_l4.html</code></td>
+            <td>本 L5 的页面、功能和 mockdata 直接继承 L4 processing nodes、logical tables、validation states 和 JSON output。</td>
+          </tr>
+          <tr>
+            <td>生成方式</td>
+            <td>串行生成：L1 -> L2 -> L3 -> L4 -> L5</td>
+            <td>页面不得脱离三闭环、八能力、L3 人机分工和 L4 校验兜底。</td>
+          </tr>
+          <tr>
+            <td>控制状态</td>
+            <td><span class="tag warn">Review Draft Inherited</span></td>
+            <td>本层是产品 demo 蓝图，不表示真实后端、真实机器人控制、真实路径规划、真实边缘自治或真实模型训练已具备；但页面必须承载目标产品需要的 3D 建模/路径规划、离线协同和碰撞规避功能状态。</td>
+          </tr>
+          <tr>
+            <td>合同变化</td>
+            <td><span class="tag ok">contract_changed = false</span></td>
+            <td>未新增 L1 之外的用户组、工作台或业务闭环；页面候选来自 L1/L3，功能来自 L4。</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="toc">
+        <a href="#page-tree">1. 页面树</a>
+        <a href="#frame-tree">2. Frame Tree</a>
+        <a href="#page-specs">3. 页面职责说明表</a>
+        <a href="#mapping">4. 页面与业务节点映射</a>
+        <a href="#states">5. 页面状态矩阵</a>
+        <a href="#transitions">6. 页面跳转关系</a>
+        <a href="#wireframe">7. 低保真 Wireframe 说明</a>
+        <a href="#mockdata">8. 页面级 Mockdata</a>
+      </div>
+    </section>
+
+    <section id="page-tree">
+      <h2>## L5 界面蓝图层</h2>
+      <h3>### 1. 页面树</h3>
+      <div class="note">
+        <strong>信息架构原则：</strong>Command Center 是入口，Mission Orchestration 是主工作台，Spatial / Skill / Robot / Evidence 是决策依据与下钻页面。Capability Evaluation 与 Visual Data Intelligence 保持 P0.5/P1 可扩展，但在 Demo 中至少提供核心区块和独立候选页。
+      </div>
+      <pre><code>FMG Embodied Intelligence Platform
+├─ 0. Global Shell
+│  ├─ Site / shift / scenario selector
+│  ├─ Global attention queue
+│  ├─ Current mission context
+│  └─ Mock boundary indicator
+├─ 1. AI Operations Command Center
+│  ├─ Pilbara remote operations overview
+│  ├─ Live industrial events
+│  ├─ Fleet and mission status
+│  ├─ Spatial risk summary
+│  ├─ AI recommendation queue
+│  └─ Production impact and safety KPI
+├─ 2. Mission Orchestration Center
+│  ├─ Mission graph
+│  ├─ AI reasoning and recommendation
+│  ├─ Route plan and local trajectory state
+│  ├─ Edge autonomy and offline policy state
+│  ├─ Skill / robot match
+│  ├─ Spatial safety gate
+│  ├─ HITL approval drawer
+│  └─ Execution replay
+├─ 3. Spatial Intelligence
+│  ├─ 3D semantic mine map context
+│  ├─ Point cloud / occupancy / ESDF layer status
+│  ├─ Zone policy and CAS rule list
+│  ├─ Global route plan
+│  ├─ Local trajectory and collision risk
+│  ├─ Route conflict detail
+│  ├─ Safe corridor alternatives
+│  └─ Approve / recalculate / hold actions
+├─ 4. Inspection / Anomaly Detail
+│  ├─ Conveyor CV-12 anomaly overview
+│  ├─ Acoustic / thermal / visual evidence
+│  ├─ Production impact
+│  ├─ AI interpretation
+│  └─ Create or open mission
+├─ 5. Emergency Intervention Detail
+│  ├─ Physical work steps
+│  ├─ Humanoid / quadruped / drone status
+│  ├─ Edge runtime and offline sync state
+│  ├─ Collision avoidance events
+│  ├─ Safety gate and E-stop
+│  ├─ Sensor feed mock
+│  └─ Verification result
+├─ 6. Skill Registry
+│  ├─ Skill taxonomy
+│  ├─ Robot compatibility matrix
+│  ├─ Required payload and evidence
+│  ├─ Safety level and standard mapping
+│  └─ Skill readiness explanation
+├─ 7. Robot Capability Profile
+│  ├─ Robot identity and current state
+│  ├─ Payload and adapter profile
+│  ├─ Edge node and autonomy mode
+│  ├─ Latest seven-dimension PC/HG assessment
+│  ├─ Data import eligibility
+│  ├─ PHM and maintenance alerts
+│  └─ Mission history and evidence links
+├─ 8. Capability Evaluation
+│  ├─ Seven required evaluation dimensions
+│  ├─ Fixed weight scoring calculator
+│  ├─ PC / HG auto grading
+│  ├─ Screening and data import decision
+│  └─ Improvement recommendations
+└─ 9. Visual Data Intelligence
+   ├─ Evidence repository
+   ├─ Geo-indexed media
+   ├─ Timeline replay
+   ├─ Dataset readiness
+   └─ Training data gaps</code></pre>
+    </section>
+
+    <section id="frame-tree">
+      <h3>### 2. Frame Tree</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>页面</th>
+            <th>Frame Tree</th>
+            <th>建议功能位置</th>
+            <th>关键功能细节</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Global Shell</td>
+            <td>Shell -> Top Context Bar -> Side Navigation -> Main Workspace -> Right Attention Rail -> Toast/Modal Layer</td>
+            <td>顶部放 site/shift/scenario；左侧放一级导航；右侧放全局 attention 和 mission context。</td>
+            <td>显示当前 mock 场景、数据更新时间、当前用户角色；全局 E-stop 只在任务执行相关页面激活；任何页面可跳转到当前 mission。</td>
+          </tr>
+          <tr>
+            <td>AI Operations Command Center</td>
+            <td>Page -> KPI Strip -> Operations Map Context -> Events &amp; Attention -> Fleet Snapshot -> Production/Safety Summary -> Recent Evidence</td>
+            <td>顶部放 KPI；中间主区域放 remote operations map/context；右侧放 attention queue；底部放 evidence 和 fleet 摘要。</td>
+            <td>事件列表支持按 risk/site/asset 筛选；点击 CV-12 anomaly 打开 Mission 或 Anomaly Detail；KPI 使用 FY25 shipments、The Hive、CAS 等公开资料校准的 mock 指标。</td>
+          </tr>
+          <tr>
+            <td>Mission Orchestration Center</td>
+            <td>Page -> Mission Header -> Mission Graph -> Route Plan Panel -> AI Reasoning Panel -> Safety Gate Panel -> Edge Runtime Panel -> Robot Match Panel -> HITL Drawer -> Execution Timeline</td>
+            <td>中间放 mission graph；靠近图谱放 route plan 和 local trajectory 状态；右侧放 AI explanation、safety gate、edge runtime、robot match；底部放 execution timeline。</td>
+            <td>mission graph 节点可选中；每个 step 展示 required skill、assigned robot、status、verification required；route plan 展示 map version、global path、collision risk、fallback policy；审批 drawer 展示 approve/recalculate/hold/e-stop。</td>
+          </tr>
+          <tr>
+            <td>Spatial Intelligence</td>
+            <td>Page -> Spatial Context Header -> 3D Semantic Map -> Layer Status -> Global Route Plan -> Local Trajectory &amp; Collision Risk -> Zone Policy Panel -> Safe Corridor Alternatives -> Action Bar</td>
+            <td>主区域放 3D semantic map 和 path overlay；左侧或上方放 layer/zone filters；右侧放路径、冲突解释和安全动作。</td>
+            <td>展示 point cloud、occupancy、ESDF、semantic labels、blast zone、truck route、CAS 20m exclusion、restricted corridor；每条冲突说明来源、影响 mission、推荐动作、fallback policy。</td>
+          </tr>
+          <tr>
+            <td>Inspection / Anomaly Detail</td>
+            <td>Page -> Anomaly Header -> Signal Evidence Tabs -> AI Interpretation -> Production Impact -> Required Skills -> Mission Link</td>
+            <td>顶部放异常摘要；中部放 acoustic/thermal/visual tab；右侧放 AI 解释和创建 mission 动作。</td>
+            <td>声学频段、热异常、视觉摘要均为 mock；显示 confidence、severity、estimated loss、missing context；可进入 Mission Orchestration。</td>
+          </tr>
+          <tr>
+            <td>Emergency Intervention Detail</td>
+            <td>Page -> Intervention Header -> Physical Step Checklist -> Robot Status Stack -> Edge Runtime State -> Collision Events -> Safety Gate -> Sensor Feed Mock -> Verification Panel</td>
+            <td>左侧放步骤 checklist；中间放 sensor feed/mock evidence；右侧放 safety gate、edge runtime、collision events 和 E-stop。</td>
+            <td>Humanoid intervention 默认 blocked by approval；inspection steps 可先执行；物理干预需展示 required role、审批状态、edge offline policy、local avoidance action 和 emergency stop。</td>
+          </tr>
+          <tr>
+            <td>Skill Registry</td>
+            <td>Page -> Skill Category Filter -> Skill List -> Skill Detail -> Compatibility Matrix -> Evidence Requirement -> Standards Reference</td>
+            <td>左侧放 skill taxonomy；中间放 detail；右侧放 robot compatibility 和 evidence required。</td>
+            <td>支持 Thermal Inspection、Acoustic Verification、Safe Corridor Navigation、Manual Intervention；展示 payload、minimum readiness、safety level、VDA 5050/MassRobotics/ISO reference。</td>
+          </tr>
+          <tr>
+            <td>Robot Capability Profile</td>
+            <td>Page -> Robot Header -> Current Mission -> Payload &amp; Adapter -> Edge Node &amp; Autonomy Mode -> Capability Radar -> PHM Alerts -> Skill Readiness -> Mission History</td>
+            <td>顶部放 identity/status；中部放 capability、payload 和 edge node；右侧放 PHM、current mission、quick actions。</td>
+            <td>展示 battery、SoH、connectivity、edge_node_id、autonomy_mode、local_policy_version、PC/HG、adapter protocol、interop profile；PHM task_blocking 或 edge policy mismatch 会直接影响 mission match。</td>
+          </tr>
+          <tr>
+            <td>Capability Evaluation</td>
+            <td>Page -> Scenario Selector -> Seven Required Dimensions -> Weight Calculator -> PC/HG Result -> Screening Decision -> Data Import Policy -> Improvement Notes</td>
+            <td>顶部放 scenario selector 和评测对象；中间放七维必评表和权重计算；右侧放 PC/HG、处置策略和数据入库策略。</td>
+            <td>按材料要求展示 Operation Types、Repetitiveness、Working Range、SKU Variation、Perception &amp; Visual Judgement、Ergonomics、Environment；每维 1-5 分，自动计算 weighted score、PC/HG 和 reject/pilot/full pass。</td>
+          </tr>
+          <tr>
+            <td>Visual Data Intelligence</td>
+            <td>Page -> Evidence Search -> Evidence Cards -> Geo Index Panel -> Timeline Replay -> Dataset Readiness -> Training Gaps</td>
+            <td>左侧放筛选；中间放 evidence cards 和 timeline；右侧放 dataset readiness 和 gaps。</td>
+            <td>按 mission、asset、evidence quality、dataset tags 筛选；点击 evidence 回到 Mission replay；显示 training readiness 但标注 mock。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="page-specs">
+      <h3>### 3. 页面职责说明表</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>页面名称</th>
+            <th>页面类型</th>
+            <th>页面目标</th>
+            <th>承载业务节点</th>
+            <th>关键输入</th>
+            <th>关键输出</th>
+            <th>核心区块</th>
+            <th>关键操作</th>
+            <th>状态要求</th>
+            <th>进入条件</th>
+            <th>跳转去向</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>AI Operations Command Center</td>
+            <td>入口/态势总览</td>
+            <td>让用户看到全矿区 AI-to-Work 当前状态和待处理风险。</td>
+            <td>B01, B02, B09</td>
+            <td>CommandCenterSummary, AttentionItem[], public_baseline_context</td>
+            <td>selected_event, selected_mission, attention_action</td>
+            <td>KPI、Operations Context、Events、Fleet、Spatial Risk、Evidence Summary。</td>
+            <td>筛选事件、打开 mission、打开 anomaly、确认 attention owner。</td>
+            <td>default、empty、loading、error、permission、review-required。</td>
+            <td>打开系统默认进入。</td>
+            <td>Mission、Anomaly、Spatial、Robot Profile、Evidence。</td>
+          </tr>
+          <tr>
+            <td>Mission Orchestration Center</td>
+            <td>任务工作台</td>
+            <td>把异常处置变成 mission graph、路线规划、机器人匹配、边缘安全、审批和执行回放。</td>
+            <td>B03, B04, B04A, B05, B06, B07</td>
+            <td>MissionGraphOutput, RoutePlanOutput, SafetyGateOutput, EdgeAutonomyOutput, CollisionAvoidanceOutput, RobotMatchOutput, AIRecommendation</td>
+            <td>ApprovalRecord, ExecutionState, EvidencePackage draft, OfflineSyncSession</td>
+            <td>Mission header、Graph、Route plan、AI reasoning、Safety Gate、Edge Runtime、Robot Match、HITL Drawer、Timeline。</td>
+            <td>approve inspection、recalculate route、hold、safe stop、e-stop、open robot、open evidence。</td>
+            <td>draft、awaiting approval、approved、blocked、stale map、route failed、edge offline、executing、verified、permission denied。</td>
+            <td>从 Command Center 或 Anomaly Detail 进入。</td>
+            <td>Spatial、Robot Profile、Emergency Detail、Visual Data。</td>
+          </tr>
+          <tr>
+            <td>Spatial Intelligence</td>
+            <td>空间治理页</td>
+            <td>解释 3D 地图、路径规划、局部轨迹、碰撞风险与矿区空间约束之间的关系。</td>
+            <td>B04, B04A, B06</td>
+            <td>SemanticMap3D, RoutePlanOutput, CollisionAvoidanceOutput, SpatialZone[], ProductionPlan, Mission route context, SafetyGateOutput</td>
+            <td>route_decision, safety_gate_state, recalculated_route_mock, collision_action</td>
+            <td>3D map、Layer status、Zone policy、CAS rule、Global route、Local trajectory、Collision risk、Safe corridors、Action bar。</td>
+            <td>查看地图图层、查看冲突、切换 zone、选择 corridor、recalculate/hold/safe stop。</td>
+            <td>default、no conflict、conflict、blocked、stale map、route failed、collision risk active、approval required、permission denied。</td>
+            <td>从 Mission 或 Command Center 空间风险进入。</td>
+            <td>Mission、Emergency Detail、Command Center。</td>
+          </tr>
+          <tr>
+            <td>Inspection / Anomaly Detail</td>
+            <td>异常详情页</td>
+            <td>展示异常证据、AI 解释、生产影响和 mission 创建入口。</td>
+            <td>B01, B02, B03</td>
+            <td>Anomaly, Evidence refs, Production context, AIRecommendation</td>
+            <td>mission_draft_request, evidence_focus</td>
+            <td>Anomaly header、Evidence tabs、AI interpretation、Production impact、Required skills。</td>
+            <td>创建 mission、打开 existing mission、标注证据、请求人工复核。</td>
+            <td>default、low confidence、missing evidence、mission exists、error。</td>
+            <td>从事件列表或 evidence link 进入。</td>
+            <td>Mission、Evidence、Skill Registry。</td>
+          </tr>
+          <tr>
+            <td>Emergency Intervention Detail</td>
+            <td>执行/干预详情页</td>
+            <td>管理物理处置步骤、安全闸门、边缘执行、局部碰撞规避、机器人状态和验证结果。</td>
+            <td>B04A, B06, B07, B08</td>
+            <td>MissionStep[], ApprovalRecord, EdgeAutonomyOutput, CollisionAvoidanceOutput, Robot status, sensor feed mock</td>
+            <td>execution_update, local_action, offline_sync_event, verification_result, evidence_package</td>
+            <td>Step checklist、Robot stack、Edge runtime、Collision events、Safety gate、Sensor feed、Verification。</td>
+            <td>start inspection、pause、hold at safe waypoint、safe stop、e-stop、record note、mark verified。</td>
+            <td>standby、approval required、edge degraded、collision risk active、executing、paused、e-stop active、verified、failed。</td>
+            <td>Mission 有 approved inspection 或 intervention step。</td>
+            <td>Mission、Robot Profile、Evidence。</td>
+          </tr>
+          <tr>
+            <td>Skill Registry</td>
+            <td>能力字典页</td>
+            <td>解释平台可执行 physical capability 与机器人/载荷/证据要求。</td>
+            <td>B05, B09</td>
+            <td>SkillDefinition[], RobotAsset[], CapabilityAssessment[]</td>
+            <td>selected_skill, compatibility_explanation</td>
+            <td>Skill taxonomy、Detail、Compatibility matrix、Evidence requirement、Standards reference。</td>
+            <td>筛选 skill、查看兼容机器人、打开 robot profile、查看 evidence required。</td>
+            <td>default、no compatible robot、unknown grade、loading、error。</td>
+            <td>从导航、Mission required skill 或 Robot Profile 进入。</td>
+            <td>Robot Profile、Capability Evaluation、Mission。</td>
+          </tr>
+          <tr>
+            <td>Robot Capability Profile</td>
+            <td>机器人档案页</td>
+            <td>解释某台机器人为什么可用、不可用或降级可用。</td>
+            <td>B04A, B05, B07, B09</td>
+            <td>RobotAsset, EdgeAutonomyState, CapabilityAssessment, PHMAlert, Mission history</td>
+            <td>robot_readiness_view, edge_autonomy_view, unavailable_reasons, maintenance_action</td>
+            <td>Identity、Status、Payload、Adapter、Edge Node、Autonomy Mode、Capability、PHM、Skill readiness、History。</td>
+            <td>查看 current mission、查看 skill compatibility、打开 evidence、创建维护 note。</td>
+            <td>available、busy、degraded、blocked by PHM、edge policy mismatch、offline、unknown assessment。</td>
+            <td>从 Robot match、Fleet snapshot 或 Skill Registry 进入。</td>
+            <td>Mission、Skill Registry、Capability Evaluation、Evidence。</td>
+          </tr>
+          <tr>
+            <td>Capability Evaluation</td>
+            <td>评测/适配页</td>
+            <td>按七维工业场景评测材料完成场景准入评分、PC/HG 自动判定和数据入库策略。</td>
+            <td>B05, B09</td>
+            <td>CapabilityAssessment[], EvaluationDimension[], SkillDefinition[], scenario</td>
+            <td>weighted_score, pc_level, hg_level, application_decision, data_import_policy, improvement_notes</td>
+            <td>Scenario selector、七维必评表、权重计算器、PC/HG 结果、筛选策略、数据入库策略、Recommendations。</td>
+            <td>切换场景、填写/查看维度评分、重新计算、比较机器人、打开不可用原因、打开 robot profile。</td>
+            <td>default、insufficient assessment、score out of range、unknown grade、filtered empty。</td>
+            <td>从导航、Robot Profile 或 Skill Registry 进入。</td>
+            <td>Robot Profile、Skill Registry。</td>
+          </tr>
+          <tr>
+            <td>Visual Data Intelligence</td>
+            <td>证据/数据资产页</td>
+            <td>把任务证据、回放和 dataset readiness 呈现为长期数据资产。</td>
+            <td>B08, B09</td>
+            <td>EvidencePackage[], DatasetAsset[], Mission history</td>
+            <td>selected_evidence, dataset_filter, replay_context</td>
+            <td>Evidence repository、Geo index、Timeline replay、Dataset readiness、Training gaps。</td>
+            <td>搜索证据、打开 replay、查看 dataset、标注 quality gap、回到 mission。</td>
+            <td>default、partial evidence、not ready、empty、loading、error。</td>
+            <td>从导航、Mission evidence 或 Robot history 进入。</td>
+            <td>Mission、Anomaly Detail、Robot Profile。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="mapping">
+      <h3>### 4. 页面与业务节点映射</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>业务节点</th>
+            <th>主页面</th>
+            <th>辅助页面</th>
+            <th>页面需要承载的业务问题</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>B01 事件态势进入</td><td>AI Operations Command Center</td><td>Anomaly Detail</td><td>现在发生了什么？哪些事件需要人处理？影响哪个矿区/资产/产线？</td></tr>
+          <tr><td>B02 AI 业务判断</td><td>Anomaly Detail</td><td>Command Center, Mission</td><td>AI 为什么认为这是高风险？置信度多少？缺什么上下文？</td></tr>
+          <tr><td>B03 Mission 生成</td><td>Mission Orchestration</td><td>Anomaly Detail, Skill Registry</td><td>这个异常如何拆成可执行步骤？每步需要什么能力和证据？</td></tr>
+          <tr><td>B04 3D 空间建模与路径规划</td><td>Spatial Intelligence</td><td>Mission, Emergency Detail</td><td>地图是否新鲜？路径是否可达？全局路径和局部轨迹是什么？</td></tr>
+          <tr><td>B04A 空间安全、碰撞规避与边缘兜底</td><td>Spatial Intelligence</td><td>Mission, Emergency Detail, Robot Profile</td><td>哪些 zone/policy/CAS/动态 agent 触发风险？弱网时边缘节点能做什么？</td></tr>
+          <tr><td>B05 能力与机器人匹配</td><td>Mission Orchestration</td><td>Robot Profile, Skill Registry, Capability Evaluation</td><td>为什么这台机器人能执行？哪些机器人不可用？</td></tr>
+          <tr><td>B06 HITL 安全确认</td><td>Mission Orchestration</td><td>Spatial, Emergency Detail</td><td>谁需要批准？批准什么动作？拒绝或 hold 会发生什么？</td></tr>
+          <tr><td>B07 执行监控与干预</td><td>Emergency Intervention Detail</td><td>Mission, Robot Profile</td><td>任务执行到哪一步？边缘本地动作是什么？是否可暂停、接管、safe stop 或 E-stop？</td></tr>
+          <tr><td>B08 验证与证据归档</td><td>Visual Data Intelligence</td><td>Emergency Detail, Mission</td><td>执行结果是否可验证？证据质量如何？</td></tr>
+          <tr><td>B09 数据资产与能力反馈</td><td>Visual Data Intelligence</td><td>Robot Profile, Capability Evaluation</td><td>这次任务如何影响 readiness、PHM、dataset readiness 和未来训练？</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="states">
+      <h3>### 5. 页面状态矩阵</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>页面</th>
+            <th>Default</th>
+            <th>Empty</th>
+            <th>Loading</th>
+            <th>Error</th>
+            <th>Permission</th>
+            <th>业务特殊状态</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Command Center</td>
+            <td>显示 active events、fleet、mission、KPI。</td>
+            <td>无 active event 时显示 All clear 和 recent evidence。</td>
+            <td>加载 mock baseline 和 events。</td>
+            <td>Mock data unavailable。</td>
+            <td>非授权用户只读 attention。</td>
+            <td>Review required、production impact spike、CAS risk active。</td>
+          </tr>
+          <tr>
+            <td>Mission Orchestration</td>
+            <td>显示 mission graph 和 AI recommendation。</td>
+            <td>无 mission 时提示从 Command Center 选择事件。</td>
+            <td>生成 mission graph、route plan 和 edge state。</td>
+            <td>draft_incomplete 或 invalid AI output。</td>
+            <td>角色不匹配时禁用 approve。</td>
+            <td>awaiting approval、blocked route、stale map、route failed、edge offline、collision risk active、executing、verified、E-stop active。</td>
+          </tr>
+          <tr>
+            <td>Spatial Intelligence</td>
+            <td>显示 3D map、layer status、route、trajectory、conflict。</td>
+            <td>无冲突显示 route clear。</td>
+            <td>加载 map layers、zone policy 和 route plan。</td>
+            <td>zone policy unknown / map layer unavailable。</td>
+            <td>非安全负责人只读 safety gate。</td>
+            <td>approval_required、blocked、stale map、route planning failed、collision risk active、CAS 20m exclusion triggered。</td>
+          </tr>
+          <tr>
+            <td>Anomaly Detail</td>
+            <td>显示证据和 AI 解释。</td>
+            <td>无证据时显示 missing evidence。</td>
+            <td>加载 evidence refs。</td>
+            <td>异常数据解析失败。</td>
+            <td>无权限时不能创建 mission。</td>
+            <td>low confidence、mission exists、manual review required。</td>
+          </tr>
+          <tr>
+            <td>Emergency Intervention</td>
+            <td>显示执行步骤、安全门、edge runtime 和 collision events。</td>
+            <td>无可执行 step 时显示 no approved steps。</td>
+            <td>加载 execution state、edge state 和 sensor mock。</td>
+            <td>sensor mock feed unavailable / edge state unavailable。</td>
+            <td>非授权用户只能查看，不能 start/stop。</td>
+            <td>standby、approval required、edge degraded、offline hold、collision risk active、paused、failed、verified。</td>
+          </tr>
+          <tr>
+            <td>Skill Registry</td>
+            <td>显示 skill list 和 compatibility。</td>
+            <td>筛选无结果。</td>
+            <td>加载 skill taxonomy。</td>
+            <td>skill schema invalid。</td>
+            <td>只读。</td>
+            <td>no compatible robot、unknown standard mapping。</td>
+          </tr>
+          <tr>
+            <td>Robot Profile</td>
+            <td>显示状态、能力、edge node 和 PHM。</td>
+            <td>无任务历史。</td>
+            <td>加载 robot profile 和 edge autonomy state。</td>
+            <td>robot not found。</td>
+            <td>无维护权限不能创建 note。</td>
+            <td>degraded readiness、PHM blocking、edge policy mismatch、offline、busy。</td>
+          </tr>
+          <tr>
+            <td>Capability Evaluation</td>
+            <td>显示七维必评、权重总分、PC/HG 和数据入库策略。</td>
+            <td>无评估数据。</td>
+            <td>加载 scenario scores。</td>
+            <td>grade mapping failed。</td>
+            <td>只读。</td>
+            <td>unknown PC/HG、insufficient assessment、score out of range、reject/pilot/full pass。</td>
+          </tr>
+          <tr>
+            <td>Visual Data Intelligence</td>
+            <td>显示 evidence repository 和 dataset readiness。</td>
+            <td>无 evidence 或无 dataset。</td>
+            <td>加载 evidence cards。</td>
+            <td>evidence package invalid。</td>
+            <td>无发布权限只能查看。</td>
+            <td>partial evidence、Gold/Silver/Bronze、training not ready。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="transitions">
+      <h3>### 6. 页面跳转关系</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>起点</th>
+            <th>触发动作</th>
+            <th>目标页面</th>
+            <th>携带上下文</th>
+            <th>说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Command Center</td><td>点击 CV-12 attention item</td><td>Mission Orchestration</td><td>mission_id=MS-20391</td><td>主 Demo 入口。</td></tr>
+          <tr><td>Command Center</td><td>点击 acoustic anomaly</td><td>Anomaly Detail</td><td>event_id=EVT-CV12-AC-001</td><td>查看证据和 AI 解释。</td></tr>
+          <tr><td>Mission Orchestration</td><td>点击 route plan / collision risk</td><td>Spatial Intelligence</td><td>mission_id, route_id, map_id, zone_id</td><td>解释 3D 地图、路径规划、碰撞风险和安全门。</td></tr>
+          <tr><td>Mission Orchestration</td><td>点击 matched robot</td><td>Robot Capability Profile</td><td>robot_id</td><td>解释机器人 readiness。</td></tr>
+          <tr><td>Mission Orchestration</td><td>点击 required skill</td><td>Skill Registry</td><td>skill_id</td><td>解释 skill、payload 和 evidence requirement。</td></tr>
+          <tr><td>Mission Orchestration</td><td>批准 inspection steps</td><td>Emergency Intervention Detail</td><td>mission_id, approved_steps, route_id, edge_node_id</td><td>进入执行、边缘策略和验证。</td></tr>
+          <tr><td>Emergency Intervention</td><td>mark verified</td><td>Visual Data Intelligence</td><td>evidence_id</td><td>查看证据包和数据资产。</td></tr>
+          <tr><td>Robot Profile</td><td>点击 capability score</td><td>Capability Evaluation</td><td>robot_id, scenario</td><td>查看七维评估。</td></tr>
+          <tr><td>Visual Data Intelligence</td><td>点击 replay mission</td><td>Mission Orchestration</td><td>mission_id</td><td>从证据回到任务回放。</td></tr>
+        </tbody>
+      </table>
+      <pre><code>flowchart LR
+  A["Command Center"] -->|"Open attention item"| B["Mission Orchestration"]
+  A -->|"Open anomaly evidence"| C["Anomaly Detail"]
+  B -->|"View route plan / collision risk"| D["Spatial Intelligence"]
+  B -->|"View robot match"| E["Robot Capability Profile"]
+  B -->|"View required skill"| F["Skill Registry"]
+  B -->|"Approve inspection"| G["Emergency Intervention Detail"]
+  G -->|"Verification complete"| H["Visual Data Intelligence"]
+  E -->|"Open seven-dimension score"| I["Capability Evaluation"]
+  H -->|"Replay mission"| B
+  C -->|"Create/Open mission"| B</code></pre>
+    </section>
+
+    <section id="wireframe">
+      <h3>### 7. 低保真 Wireframe 说明</h3>
+      <h4>7.1 Command Center 结构</h4>
+      <pre><code>[Top Context Bar: site / shift / scenario / mock data status]
+[Left Nav]
+[KPI Strip: FY25 baseline / active missions / high-risk events / fleet readiness / CAS risk]
+[Main Operations Context: Pilbara hub + rail + processing + active event markers]
+[Right Attention Queue: CV-12 anomaly, CAS risk, robot degraded readiness]
+[Lower Panels: Fleet snapshot | Spatial risk summary | Recent evidence]</code></pre>
+
+      <h4>7.2 Mission Orchestration 结构</h4>
+      <pre><code>[Mission Header: MS-20391 / CV-12 / P1 / production impact / approval state]
+[Mission Graph: thermal scan -> acoustic verification -> humanoid standby -> verification]
+[Route Plan Panel: map version / global path / local trajectory / collision risk / fallback policy]
+[Right Rail]
+  [AI Reasoning]
+  [Spatial Safety Gate]
+  [Edge Runtime: connectivity / mission cache / local action / pending sync]
+  [Robot Match]
+  [HITL Actions]
+[Bottom Timeline: event -> recommendation -> approval -> execution -> evidence]</code></pre>
+
+      <h4>7.3 Spatial Intelligence 结构</h4>
+      <pre><code>[Spatial Header: mission / route / active zone policy / map freshness]
+[3D Semantic Map Context: point cloud layer, occupancy layer, ESDF layer, semantic labels]
+[Route Overlay: global path, local trajectory, safe waypoint, CAS 20m exclusion, truck route]
+[Policy Panel: open / restricted / approval_required / blocked]
+[Conflict Detail: min distance, predicted conflict time, affected steps, allowed actions]
+[Action Bar: approve inspection / recalculate route / hold / e-stop]</code></pre>
+
+      <h4>7.4 Robot / Skill / Capability 决策结构</h4>
+      <pre><code>[Skill Registry]
+  [Skill List] -> [Skill Detail] -> [Compatibility Matrix] -> [Evidence Required]
+
+[Robot Capability Profile]
+  [Robot Header] -> [Payload &amp; Adapter] -> [Edge Node &amp; Autonomy Mode] -> [Latest PC/HG Assessment]
+  -> [PHM Alerts] -> [Skill Readiness] -> [Mission History]</code></pre>
+
+      <h4>7.4.2 Emergency / Edge Safety 功能结构</h4>
+      <pre><code>[Emergency Intervention Detail]
+  [Step Checklist]
+  [Robot Status Stack]
+  [Edge Runtime State: connectivity, cache, policy version, offline mode]
+  [Collision Events: agents, min distance, action taken, resolved state]
+  [Safety Gate and E-stop]
+  [Sensor Feed Mock]
+  [Verification Panel]</code></pre>
+
+      <h4>7.4.1 Capability Evaluation 功能结构</h4>
+      <pre><code>[Scenario Selector: Conveyor inspection / Blast zone patrol / High-risk intervention]
+[Assessment Subject: scenario-level or robot-in-scenario]
+[Seven Required Dimensions]
+  [D1 Operation Types: Level A/B/C, score 1-5]
+  [D2 Repetitiveness: Low/Medium/High, score 1-5]
+  [D3 Working Range: Narrow/Standard/Wide &amp; Dynamic, score 1-5]
+  [D4 SKU Variation: Fixed/Slight/Heavy Dynamic, score 1-5]
+  [D5 Perception &amp; Visual Judgement: Simple/Basic/Advanced, score 1-5]
+  [D6 Ergonomics: Isolated/Semi Co-work/Full Co-work, score 1-5]
+  [D7 Environment: Lab/Factory Mild/Complex Harsh, score 1-5]
+[Weight Calculator]
+  Operation Types 15%
+  Repetitiveness 15%
+  Working Range 20%
+  SKU Variation 15%
+  Perception &amp; Vision 10%
+  Comprehensive Environment Margin 25%
+[PC/HG Result]
+  1.0-2.4 -> PC1/HG1 -> Reject, archive only
+  2.5-3.9 -> PC2/HG2 -> Pilot, partial data import
+  4.0-5.0 -> PC3/HG3 -> Full pass, priority data import
+[Evidence Basis &amp; Improvement Notes]</code></pre>
+
+      <h4>7.5 Evidence / Data 结构</h4>
+      <pre><code>[Evidence Search Filters]
+[Evidence Cards: mission, asset, quality, media types, verification]
+[Geo Index and Timeline Replay]
+[Dataset Readiness: source missions, coverage, quality, training readiness]
+[Training Gaps and Review Notes]</code></pre>
+    </section>
+
+    <section id="mockdata">
+      <h3>### 8. 页面级 Mockdata</h3>
+      <div class="warning">
+        <strong>Mockdata 边界：</strong>以下数据混合了 L4 处理输出和公开资料校准项。公开资料只用于背景指标和场景真实感，不代表系统接入 Fortescue 真实运营数据。
+      </div>
+      <pre><code>{
+  "globalShell": {
+    "currentUser": {
+      "userId": "USR-SAFE-01",
+      "name": "Site Safety Lead",
+      "role": "Site Safety Lead",
+      "permissions": ["view_all", "approve_safety_gate", "hold_mission", "e_stop"]
+    },
+    "context": {
+      "site": "Pilbara-West",
+      "scenario": "Conveyor CV-12 acoustic anomaly",
+      "shift": "Day Shift",
+      "dataMode": "mock",
+      "lastUpdated": "2026-05-12T10:20:00+08:00"
+    }
+  },
+  "publicBaselineContext": {
+    "fy25IronOreShipments": {"value": 198.4, "unit": "Mt", "source": "Fortescue June 2025 Quarterly Production Report"},
+    "q4Fy25Shipments": {"value": 55.2, "unit": "Mt", "source": "Fortescue June 2025 Quarterly Production Report"},
+    "heavyHaulRail": {"value": 760, "unit": "km", "source": "Fortescue Iron Ore Operations"},
+    "processingPlants": {"value": 6, "unit": "hematite plants", "source": "Fortescue The Hive"},
+    "oreCars": {"value": 4000, "unit": "cars", "source": "Fortescue The Hive"},
+    "autonomousHaulTrucks": {"value": ">200", "unit": "trucks", "source": "Fortescue The Hive"},
+    "casAssets": {"value": ">400", "unit": "assets", "source": "Fortescue CAS"},
+    "casPotentialCollisionsAvoided2025": {"value": 194, "unit": "events", "source": "Fortescue CAS"},
+    "casExclusionZone": {"value": 20, "unit": "m", "source": "Fortescue CAS"}
+  },
+  "commandCenter": {
+    "kpis": [
+      {"label": "Active industrial events", "value": 7, "trend": "+2 vs last shift", "severity": "warning"},
+      {"label": "High-risk missions", "value": 3, "trend": "1 awaiting approval", "severity": "risk"},
+      {"label": "Fleet readiness", "value": "82%", "trend": "2 degraded", "severity": "ok"},
+      {"label": "Estimated production impact", "value": "-2.3 kt/h", "trend": "CV-12 anomaly", "severity": "risk"},
+      {"label": "CAS risk flags", "value": 2, "trend": "20m exclusion context", "severity": "warning"}
+    ],
+    "attentionItems": [
+      {
+        "attentionId": "ATT-CV12-001",
+        "priority": "P1",
+        "title": "Conveyor CV-12 acoustic anomaly",
+        "reason": "Critical acoustic signal with possible roller bearing hotspot.",
+        "recommendedAction": "Open mission graph and approve inspection-only steps.",
+        "ownerRole": "Site Safety Lead",
+        "targetPage": "Mission Orchestration",
+        "targetId": "MS-20391"
+      },
+      {
+        "attentionId": "ATT-CAS-003",
+        "priority": "P2",
+        "title": "CAS exclusion zone intersects service route",
+        "reason": "Route candidate crosses 20m exclusion context near mobile equipment corridor.",
+        "recommendedAction": "Review Spatial Intelligence and recalculate route.",
+        "ownerRole": "Dispatcher",
+        "targetPage": "Spatial Intelligence",
+        "targetId": "ZN-CAS-20M"
+      }
+    ]
+  },
+  "missionOrchestration": {
+    "mission": {
+      "missionId": "MS-20391",
+      "title": "CV-12 anomaly inspection and verification",
+      "site": "Pilbara-West",
+      "hub": "Chichester Hub",
+      "asset": "Conveyor CV-12",
+      "status": "awaiting_human_approval",
+      "riskLevel": "P1",
+      "confidence": 0.84,
+      "productionImpact": "-2.3 kt/h",
+      "estimatedLoss": "$420k",
+      "approvalState": "Human approval required"
+    },
+    "missionGraph": [
+      {
+        "stepId": "STEP-01",
+        "name": "Drone thermal scan",
+        "type": "inspection",
+        "requiredSkill": "Thermal Inspection",
+        "assignedRobot": "RB-DRN-07",
+        "status": "ready",
+        "verificationRequired": true
+      },
+      {
+        "stepId": "STEP-02",
+        "name": "Quadruped acoustic verification",
+        "type": "inspection",
+        "requiredSkill": "Acoustic Verification",
+        "assignedRobot": "RB-QDP-14",
+        "status": "ready",
+        "verificationRequired": true
+      },
+      {
+        "stepId": "STEP-03",
+        "name": "Humanoid intervention standby",
+        "type": "physical_intervention",
+        "requiredSkill": "Manual Intervention",
+        "assignedRobot": "RB-HMD-02",
+        "status": "blocked_by_approval",
+        "verificationRequired": true
+      }
+    ],
+    "aiReasoning": {
+      "summary": "CV-12 acoustic pattern indicates a high-priority conveyor bearing anomaly with potential production impact.",
+      "riskExplanation": "Critical acoustic signal plus candidate thermal evidence near an active conveyor asset.",
+      "recommendedAction": "Dispatch drone thermal inspection and quadruped acoustic verification before any humanoid intervention.",
+      "operatorNextSteps": [
+        "Review spatial gate and CAS 20m exclusion risk",
+        "Approve inspection-only mission steps",
+        "Hold humanoid intervention until verification evidence is complete"
+      ],
+      "missingContext": ["No real-time plant control feed connected", "No live robot telemetry connected"],
+      "requiresHumanApproval": true
+    },
+    "safetyGate": {
+      "gateType": "spatial_and_physical_work",
+      "requiredRole": "Site Safety Lead",
+      "state": "pending",
+      "riskReason": "Route candidate intersects restricted service corridor and CAS 20m exclusion context.",
+      "allowedActions": ["approve_inspection", "recalculate_route", "hold", "e_stop"]
+    },
+    "routePlan": {
+      "routeId": "RT-MS-20391-QDP14",
+      "mapVersion": "PIL-WEST-3D-v12.4",
+      "planner": "global_a_star_plus_local_teb_or_orca_mock",
+      "routeFeasibility": "feasible_with_replan",
+      "globalPathSummary": "Maintenance Bay 2 -> Safe Waypoint CV12-A -> Roller Bearing 4B",
+      "localTrajectoryRef": "mock://trajectory/RT-MS-20391-QDP14",
+      "collisionRisk": "medium",
+      "fallbackPolicy": "continue_to_safe_waypoint_then_hold"
+    },
+    "edgeRuntime": {
+      "edgeNodeId": "EDGE-CV12-02",
+      "connectivityState": "degraded_satellite_link",
+      "missionCacheState": "synced",
+      "localPolicyVersion": "POLICY-MINE-SAFE-v3",
+      "offlineMode": "continue_to_safe_waypoint_then_hold",
+      "currentLocalAction": "slow_down_and_yield",
+      "syncStatus": "pending_upload_3_events"
+    }
+  },
+  "spatialIntelligence": {
+    "semanticMap3D": {
+      "mapId": "MAP-PIL-WEST-CV12",
+      "mapVersion": "PIL-WEST-3D-v12.4",
+      "mapFreshnessState": "fresh",
+      "layers": [
+        {"name": "point_cloud", "status": "available", "source": "mock://pointcloud/cv12/20260512"},
+        {"name": "occupancy_grid", "status": "available", "source": "mock://map/occupancy/cv12/v12.4"},
+        {"name": "esdf", "status": "available", "source": "mock://map/esdf/cv12/v12.4"},
+        {"name": "semantic_zone", "status": "available", "labels": ["conveyor", "haul_road", "restricted_zone", "safe_waypoint"]}
+      ],
+      "confidence": 0.82
+    },
+    "zones": [
+      {"zoneId": "ZN-CAS-20M", "name": "CAS 20m exclusion context", "type": "cas_exclusion", "policy": "approval_required", "safetyLevel": "high", "affectedMission": "MS-20391"},
+      {"zoneId": "ZN-BLAST-03", "name": "Blast Window East", "type": "blast_zone", "policy": "restricted", "safetyLevel": "high", "affectedMission": null},
+      {"zoneId": "ZN-SAFE-CV12", "name": "CV-12 safe service corridor", "type": "safe_corridor", "policy": "open", "safetyLevel": "medium", "affectedMission": "MS-20391"}
+    ],
+    "routePlan": {
+      "routeId": "RT-MS-20391-QDP14",
+      "globalPath": [
+        {"x": 12.4, "y": 88.1, "z": 3.2, "label": "Maintenance Bay 2"},
+        {"x": 18.9, "y": 92.4, "z": 3.1, "label": "Safe Waypoint CV12-A"},
+        {"x": 26.5, "y": 101.6, "z": 2.9, "label": "Roller Bearing 4B"}
+      ],
+      "safetyEnvelope": {"minDistanceM": 20, "source": "Fortescue CAS public rule mock"},
+      "fallbackPolicy": "continue_to_safe_waypoint_then_hold"
+    },
+    "routeConflict": {
+      "missionId": "MS-20391",
+      "conflictId": "RC-CV12-001",
+      "severity": "warning",
+      "reason": "Primary route intersects restricted corridor near mobile equipment path.",
+      "recommendedAction": "Use CV-12 safe service corridor and keep humanoid intervention on hold."
+    },
+    "collisionAvoidance": {
+      "collisionEventId": "COL-MS-20391-001",
+      "agents": ["RB-QDP-14", "HME-TRUCK-22"],
+      "minDistance": 18.6,
+      "predictedConflictTime": "2026-05-12T10:34:18+08:00",
+      "actionTaken": "slow_down_and_yield",
+      "ruleSource": "CAS_20m_exclusion_mock + local_ORCA_mock",
+      "resolvedState": "replanned"
+    }
+  },
+  "emergencyIntervention": {
+    "missionId": "MS-20391",
+    "executionState": "inspection_steps_ready",
+    "edgeRuntimeState": {
+      "edgeNodeId": "EDGE-CV12-02",
+      "connectivityState": "degraded_satellite_link",
+      "offlineMode": "continue_to_safe_waypoint_then_hold",
+      "allowedLocalActions": ["slow_down", "yield", "hold", "return_to_safe_waypoint", "safe_stop"],
+      "pendingSyncEvents": 3
+    },
+    "collisionEvents": [
+      {
+        "eventId": "COL-MS-20391-001",
+        "displayLabel": "Quadruped yielded to HME-TRUCK-22",
+        "minDistanceM": 18.6,
+        "actionTaken": "slow_down_and_yield",
+        "resolvedState": "replanned"
+      }
+    ],
+    "safetyActions": ["hold_at_safe_waypoint", "recalculate_route", "safe_stop", "e_stop"]
+  },
+  "robots": [
+    {
+      "robotId": "RB-DRN-07",
+      "type": "Drone",
+      "status": "available",
+      "battery": 78,
+      "SoH": 0.94,
+      "payload": ["thermal_camera", "rgb_camera"],
+      "adapterProtocol": "MassRobotics_status_mock",
+      "interopProfile": "basic_state_and_location",
+      "edgeNodeId": "EDGE-DRN-01",
+      "autonomyMode": "online_supervised",
+      "localPolicyVersion": "POLICY-AIR-SAFE-v2",
+      "pcLevel": "PC2",
+      "hgLevel": "HG2",
+      "readinessScore": 88,
+      "matchedSteps": ["STEP-01"]
+    },
+    {
+      "robotId": "RB-QDP-14",
+      "type": "Quadruped",
+      "status": "available",
+      "battery": 64,
+      "SoH": 0.91,
+      "payload": ["acoustic_sensor", "rgb_camera", "gas_sensor"],
+      "adapterProtocol": "VDA5050_mock",
+      "interopProfile": "mission_state_and_navigation",
+      "edgeNodeId": "EDGE-CV12-02",
+      "autonomyMode": "edge_autonomy_enabled",
+      "localPolicyVersion": "POLICY-MINE-SAFE-v3",
+      "pcLevel": "PC2",
+      "hgLevel": "HG2",
+      "readinessScore": 82,
+      "matchedSteps": ["STEP-02"],
+      "phmAlerts": ["PHM-QDP-14-AC"]
+    },
+    {
+      "robotId": "RB-HMD-02",
+      "type": "Humanoid",
+      "status": "standby",
+      "battery": 71,
+      "SoH": 0.88,
+      "payload": ["manipulator", "rgb_camera"],
+      "adapterProtocol": "manual_gateway_mock",
+      "interopProfile": "supervised_physical_work",
+      "edgeNodeId": "EDGE-HMD-01",
+      "autonomyMode": "supervised_only",
+      "localPolicyVersion": "POLICY-HUMANOID-SAFE-v1",
+      "pcLevel": "PC2",
+      "hgLevel": "HG2",
+      "readinessScore": 74,
+      "matchedSteps": ["STEP-03"],
+      "blockingReason": "Physical intervention requires human approval and completed inspection evidence."
+    }
+  ],
+  "skills": [
+    {
+      "skillId": "SK-THERMAL-INSPECTION",
+      "name": "Thermal Inspection",
+      "category": "perception",
+      "requiredPayload": ["thermal_camera"],
+      "minimumReadiness": 0.75,
+      "safetyLevel": "medium",
+      "evidenceRequired": ["thermal_image", "geo_index", "timestamp"],
+      "standardReference": ["MassRobotics status data"]
+    },
+    {
+      "skillId": "SK-ACOUSTIC-VERIFY",
+      "name": "Acoustic Verification",
+      "category": "perception",
+      "requiredPayload": ["acoustic_sensor"],
+      "minimumReadiness": 0.75,
+      "safetyLevel": "medium",
+      "evidenceRequired": ["acoustic_summary", "image_summary", "operator_note"],
+      "standardReference": ["VDA 5050 mock mission state"]
+    },
+    {
+      "skillId": "SK-MANUAL-INTERVENTION",
+      "name": "Manual Intervention",
+      "category": "physical_work",
+      "requiredPayload": ["manipulator"],
+      "minimumReadiness": 0.85,
+      "safetyLevel": "high",
+      "evidenceRequired": ["pre_check", "video_snapshot", "operator_approval", "verification_result"],
+      "standardReference": ["ISO 3691-4 safety requirement reference"]
+    }
+  ],
+  "capabilityEvaluation": {
+    "sourceDocument": "20260511具身机器人七维工业场景评测 + 权重打分 + PC_HG分级筛选（中英双语）(1).pdf",
+    "scenario": "Conveyor inspection and verification",
+    "scoringModel": {
+      "scoreRange": "1-5",
+      "maxWeightedScore": 5.0,
+      "weights": {
+        "operationTypes": 0.15,
+        "repetitiveness": 0.15,
+        "workingRange": 0.20,
+        "skuVariation": 0.15,
+        "perceptionVision": 0.10,
+        "comprehensiveEnvironmentMargin": 0.25
+      },
+      "pcHgMapping": [
+        {"range": "1.0-2.4", "pcLevel": "PC1", "hgLevel": "HG1", "decision": "Reject project, archive only, no data import"},
+        {"range": "2.5-3.9", "pcLevel": "PC2", "hgLevel": "HG2", "decision": "Pilot trial allowed, partial data import only"},
+        {"range": "4.0-5.0", "pcLevel": "PC3", "hgLevel": "HG3", "decision": "Full pass, priority import into core training data pool"}
+      ],
+      "formulaNote": "The source document lists Ergonomics and Environment as two required dimensions, while the fixed weight table uses Comprehensive Environment Margin at 25%. This demo displays both required dimensions and uses the lower of the two scores as the conservative margin score."
+    },
+    "dimensions": [
+      {"dimensionId": "D1", "name": "Operation Types", "nameCn": "作业动作类型复杂度", "levels": ["A: single fixed action", "B: 2-3 combined operations", "C: 4+ closed-loop complex operations"]},
+      {"dimensionId": "D2", "name": "Repetitiveness", "nameCn": "作业连续重复性", "levels": ["Low: under 10 minutes with manual reset", "Medium: hour-level continuous running", "High: 8-hour full-shift stable operation"]},
+      {"dimensionId": "D3", "name": "Working Range", "nameCn": "有效作业空间范围", "levels": ["Narrow Range", "Standard Range", "Wide &amp; Dynamic Range"]},
+      {"dimensionId": "D4", "name": "Variation of Parts Handling", "nameCn": "来料姿态偏差与SKU泛化能力", "levels": ["Fixed Pose", "Slight Variation", "Heavy Dynamic Variation"]},
+      {"dimensionId": "D5", "name": "Perception &amp; Visual Judgement", "nameCn": "视觉感知智能判别", "levels": ["Simple Perception", "Basic Judgement", "Advanced Real-time Judgement"]},
+      {"dimensionId": "D6", "name": "Ergonomics", "nameCn": "人机共融工学适配", "levels": ["Isolated Zone", "Semi Co-work", "Full Ergonomic Co-work"]},
+      {"dimensionId": "D7", "name": "Environment", "nameCn": "现场环境干扰复杂度", "levels": ["Lab Ideal Environment", "Factory Mild Environment", "Complex Harsh Environment"]}
+    ],
+    "assessments": [
+      {
+        "assessmentId": "AS-CV12-QDP14-20260512",
+        "robotId": "RB-QDP-14",
+        "assessmentSubject": "Quadruped acoustic verification in conveyor corridor",
+        "scores": {
+          "operationTypes": {"score": 4, "level": "B/C", "basis": "Thermal and acoustic verification are combined operations; physical intervention is not included in this pass."},
+          "repetitiveness": {"score": 4, "level": "Medium-High", "basis": "Hour-level repeat inspection is plausible; 8-hour proof is not claimed."},
+          "workingRange": {"score": 5, "level": "Wide &amp; Dynamic Range", "basis": "Long conveyor corridor, uneven terrain and dynamic service area."},
+          "skuVariation": {"score": 3, "level": "Slight Variation", "basis": "Asset is known, but anomaly location and evidence angle vary."},
+          "perceptionVision": {"score": 4, "level": "Basic to Advanced Judgement", "basis": "Acoustic plus thermal evidence supports judgement; sub-millimeter defect proof is not claimed."},
+          "ergonomics": {"score": 3, "level": "Semi Co-work", "basis": "Occasional human and vehicle proximity with HITL approval."},
+          "environment": {"score": 5, "level": "Complex Harsh Environment", "basis": "Dust, vibration, noise, heat and dynamic mine conditions."}
+        },
+        "comprehensiveEnvironmentMarginScore": 3,
+        "weightedScore": 3.8,
+        "pcLevel": "PC2",
+        "hgLevel": "HG2",
+        "applicationDecision": "Pilot trial allowed",
+        "dataImportPolicy": "Partial data import only",
+        "improvementNotes": [
+          "Raise ergonomics proof from Semi Co-work to Full Ergonomic Co-work before PC3/HG3.",
+          "Collect full-shift repeatability evidence to prove High repetitiveness.",
+          "Add verified negative samples before increasing dataset import scope."
+        ]
+      },
+      {
+        "assessmentId": "AS-CV12-HMD02-20260512",
+        "robotId": "RB-HMD-02",
+        "assessmentSubject": "Humanoid physical intervention standby",
+        "scores": {
+          "operationTypes": {"score": 5, "level": "C", "basis": "Physical intervention requires closed-loop manipulation and verification."},
+          "repetitiveness": {"score": 2, "level": "Low-Medium", "basis": "No full-shift stability proof for intervention task."},
+          "workingRange": {"score": 4, "level": "Standard to Wide", "basis": "Needs access to conveyor service area with posture changes."},
+          "skuVariation": {"score": 3, "level": "Slight Variation", "basis": "Known equipment but uncertain intervention geometry."},
+          "perceptionVision": {"score": 3, "level": "Basic Judgement", "basis": "Visual confirmation only in mock."},
+          "ergonomics": {"score": 2, "level": "Semi Co-work limited", "basis": "Human safety boundary unresolved."},
+          "environment": {"score": 4, "level": "Complex Harsh Environment", "basis": "Mine corridor interference applies."}
+        },
+        "comprehensiveEnvironmentMarginScore": 2,
+        "weightedScore": 3.15,
+        "pcLevel": "PC2",
+        "hgLevel": "HG2",
+        "applicationDecision": "Pilot trial allowed with physical work blocked by approval",
+        "dataImportPolicy": "Partial archive; no core training import until verified execution evidence exists",
+        "improvementNotes": [
+          "Keep humanoid action behind HITL.",
+          "Do not import intervention data into core pool until verified safety evidence exists."
+        ]
+      }
+    ]
+  },
+  "phmAlerts": [
+    {
+      "alertId": "PHM-QDP-14-AC",
+      "robotId": "RB-QDP-14",
+      "component": "acoustic_sensor_mount",
+      "signalType": "rising_noise_floor",
+      "trend": "+8% over baseline",
+      "severity": "warning",
+      "recommendedMaintenance": "Inspect acoustic sensor mount within 24h",
+      "taskBlocking": false
+    }
+  ],
+  "evidenceAndData": {
+    "evidencePackage": {
+      "evidenceId": "EV-MS-20391",
+      "missionId": "MS-20391",
+      "thermalSummary": "Potential hotspot near CV-12 roller bearing, +11.4C over baseline.",
+      "acousticSummary": "Abnormal vibration band detected between 2.1kHz and 2.4kHz.",
+      "imageSummary": "No visible belt tear; dust occlusion moderate.",
+      "geoIndex": {"area": "CV-12", "asset": "roller-bearing-4B"},
+      "operatorNote": null,
+      "verificationResult": "pending",
+      "evidenceQuality": "Silver"
+    },
+    "datasetReadiness": {
+      "datasetId": "DS-CONVEYOR-ACOUSTIC-2026",
+      "name": "Conveyor acoustic anomaly dataset mock",
+      "sourceMissions": ["MS-20391", "MS-20322", "MS-20288"],
+      "hours": 46.5,
+      "quality": "medium",
+      "coverage": 0.68,
+      "trainingReadiness": 0.76,
+      "gaps": ["Need more verified negative samples", "Need consistent acoustic labels"]
+    }
+  }
+}</code></pre>
+    </section>
+  </main>
+</body>
+</html>
